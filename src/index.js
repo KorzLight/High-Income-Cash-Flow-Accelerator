@@ -271,6 +271,9 @@ function renderBlueprintTab() {
     const content = `
         <div class="animate-fade-in">
             <h2 class="text-2xl font-bold mb-4 text-[#A67B5B]">Module 3: The Implementable Spending Plan</h2>
+            <p class="mb-6 text-[#796A5C]">
+                This is where strategy meets action. Use your available cash to create a concrete, automated plan. Assign every dollar a job, starting with "Future You."
+            </p>
             <div class="grid md:grid-cols-3 gap-8">
                 <div class="md:col-span-2 space-y-6 p-6 bg-[#FDFBF8] rounded-lg border border-[#EAE0D5]">
                     
@@ -447,6 +450,9 @@ function renderAutomateTab() {
     const content = `
         <div class="animate-fade-in">
             <h2 class="text-2xl font-bold mb-4 text-[#A67B5B]">Module 4: Automation & Boundary Lock-In</h2>
+            <p class="mb-6 text-[#796A5C]">
+                A plan is only as good as its execution. Here, we lock in your new habits through automation and prepare you to protect your financial boundaries.
+            </p>
             <div class="grid md:grid-cols-2 gap-8">
                 <div class="p-6 bg-[#FDFBF8] rounded-lg border border-[#EAE0D5]">
                     <h3 class="font-semibold text-lg mb-4">The Two-Transfer Automation System</h3>
