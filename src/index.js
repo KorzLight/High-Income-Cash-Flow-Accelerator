@@ -515,10 +515,11 @@ function renderNextStepsTab() {
             <h2 class="text-2xl font-bold mb-4 text-[#A67B5B]">Closing & Next Steps</h2>
             <p class="mb-6 text-[#796A5C]">You now have the map: Your implementable spending plan. The next step is getting your personalized GPS. While this workshop provides the strategy, one-on-one coaching tailors it to your unique income, debt reality, and long-term goals.</p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="#" class="btn-primary w-full sm:w-auto py-3 px-6 rounded-lg font-semibold text-center">
+                    <a href="mailto:prea.epps@reframedfinancialcoaching.com?subject=Discovery%20Call%20Request&body=Hi,%20I%20would%20like%20to%20schedule%20a%20private%20discovery%20call." 
+                    class="btn-primary w-full sm:w-auto py-3 px-6 rounded-lg font-semibold text-center">
                         Book Your Private Discovery Call
                     </a>
-                    <a href="#" class="btn-secondary w-full sm:w-auto py-3 px-6 rounded-lg font-semibold text-center">
+                    <a href="https://www.reframedfinancialcoaching.com/" target="_blank" class="btn-secondary w-full sm:w-auto py-3 px-6 rounded-lg font-semibold text-center">
                         Join the Financial Freedom Collective
                     </a>
                 </div>
@@ -527,6 +528,8 @@ function renderNextStepsTab() {
     `;
     document.getElementById('main-content-area').innerHTML = content;
 }
+
+// Email
 
 // Navigation Tab Handlers
 function navigate(tabName) {
