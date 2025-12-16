@@ -76,7 +76,7 @@ function renderMindsetTab() {
     const content = `
         <div class="animate-fade-in">
             <h2 class="text-2xl font-bold mb-4 text-[#A67B5B]">Module 1: The Six-Figure Mindset Reset</h2>
-            <p class="mb-6 text-[#796A5C]">Financial freedom begins with a mental shift. We're not budgeting; we're strategically directing our cash flow.</p>
+            <p class="mb-6 text-[#796A5C]">Financial freedom begins with a mental shift. We're not budgeting; we're strategically directing our cash flow. This section helps uncover the 'why' behind your spending before we build the 'how'.</p>
             <div class="grid md:grid-cols-2 gap-6 items-start">
                 <div>
                     <h3 class="font-semibold text-lg mb-4">Journal Prompts for Clarity</h3>
@@ -136,8 +136,7 @@ function renderAuditTab() {
         <div class="fade-in">
             <h2 class="text-2xl font-bold mb-4 text-[#A67B5B]">Module 2: The Cash Flow Audit & Vision</h2>
             <p class="mb-6 text-[#796A5C]">
-                In this module, we will conduct a comprehensive cash flow audit to identify your current financial
-                situation.
+                Clarity is power. We calculate your true available cash, identify leaks, and set the financial goal that will drive your new behavior.
             </p>
             <div class="grid md:grid-cols-2 gap-8">
                 <!--Step 1-->
