@@ -567,4 +567,4 @@ document.querySelectorAll('.tab-button').forEach(button => {
 
 // Start App
 loadFromLocalStorage();
-navigate('blueprint'); // Default to Blueprint tab on load
+navigate('mindset'); // Default to Blueprint tab on load
