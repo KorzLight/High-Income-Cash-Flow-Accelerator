@@ -10,6 +10,11 @@ const boundaryProtocols = [
     { q: "Family pressure for trip", a: "That sounds amazing, but I'm in a focused financial quarter right now to fund my investment goals. I'll join the next trip when it aligns with my plan." }
 ];
 
+//Brand Colors js
+    const COLOR_PRIMARY = '#530D6C';
+    const COLOR_ACCENT = '#FCB80B';
+    const COLOR_NEUTRAL = '#4A4A4A';
+
 // Application State
 let appState = {
     netMonthlyPaycheck: 0,
@@ -75,8 +80,8 @@ function initChart(ctx, type, data, options) {
 function renderMindsetTab() {
     const content = `
         <div class="animate-fade-in">
-            <h2 class="text-2xl font-bold mb-4 text-[#A67B5B]">Module 1: The Six-Figure Mindset Reset</h2>
-            <p class="mb-6 text-[#796A5C]">Financial freedom begins with a mental shift. We're not budgeting; we're strategically directing our cash flow. This section helps uncover the 'why' behind your spending before we build the 'how'.</p>
+            <h2 class="text-2xl font-bold mb-4 text-brand-primary">Module 1: The Six-Figure Mindset Reset</h2>
+            <p class="mb-6 text-gray-600">Financial freedom begins with a mental shift. We're not budgeting; we're strategically directing our cash flow. This section helps uncover the 'why' behind your spending before we build the 'how'.</p>
             <div class="grid md:grid-cols-2 gap-6 items-start">
                 <div>
                     <h3 class="font-semibold text-lg mb-4">Journal Prompts for Clarity</h3>
@@ -85,17 +90,18 @@ function renderMindsetTab() {
                             <div class="prompt-card" onclick="this.classList.toggle('open')">
                                 <div class="flex justify-between items-center">
                                     <h4 class="font-semibold">${p.q}</h4>
-                                    <span class="text-xl text-[#A67B5B]">&#9662;</span>
+                                    <span class="text-xl text-brand-accent">&#9662;</span>
                                 </div>
                                 <div class="answer pt-2">
-                                    <p class="text-sm text-[#796A5C]">${p.a}</p>
+                                    <p class="text-sm text-gray-600">${p.a}</p>
                                 </div>
                             </div>
                         `).join('')}
                     </div>
                 </div>
-                <div class="text-center p-4 rounded-lg bg-[#FDFBF8]">
+                <div class="text-center p-4 rounded-lg bg-[#F9FAFB]">
                     <h3 class="font-semibold text-lg mb-4">The Power 3 Allocation Concept</h3>
+                    <p class="text-sm text-gray-500 mb-4">We will build a plan based on this powerful framework: assigning a portion of your income first to wealth, then needs, then wants.</p>
                     <div class="chart-container h-64">
                         <canvas id="conceptDonutChart"></canvas>
                     </div>
@@ -115,7 +121,7 @@ function renderConceptDonutChart() {
         labels: ['Wealth (Future You)', 'Needs (Essentials)', 'Wants (Today\'s Joy)'],
         datasets: [{
             data: [20, 50, 30],
-            backgroundColor: ['#A67B5B', '#D9CBBF', '#EAE0D5'],
+            backgroundColor: [COLOR_PRIMARY, COLOR_NEUTRAL, COLOR_ACCENT],
             borderColor: '#FFFFFF',
             borderWidth: 2,
         }]
@@ -134,28 +140,28 @@ function renderAuditTab() {
 
     const content = `
         <div class="fade-in">
-            <h2 class="text-2xl font-bold mb-4 text-[#A67B5B]">Module 2: The Cash Flow Audit & Vision</h2>
-            <p class="mb-6 text-[#796A5C]">
+            <h2 class="text-2xl font-bold mb-4 text-brand-primary">Module 2: The Cash Flow Audit & Vision</h2>
+            <p class="mb-6 text-gray-600">
                 Clarity is power. We calculate your true available cash, identify leaks, and set the financial goal that will drive your new behavior.
             </p>
             <div class="grid md:grid-cols-2 gap-8">
                 <!--Step 1-->
-                <div class="space-y-6 p-6 bg-[#FDFBF8] rounded-lg border border-[#EAE0D5]">
-                    <h3 class="font-semibold text-lg mb-2">Step 1: Calculate Your Available Cash</h3>
+                <div class="space-y-6 p-6 bg-[#F9FAFB] rounded-lg border border-gray-200 shadow-sm">
+                    <h3 class="font-semibold text-lg mb-2 text-gray-800">Step 1: Calculate Your Available Cash</h3>
                     <div>
-                        <label for="netPay" class="block text-sm font-medium text-[#3D352E]">Net Monthly Paycheck ($)</label>
+                        <label for="netPay" class="block text-sm font-medium text-gray-700">Net Monthly Paycheck ($)</label>
                         <input type="number" id="netPay" class="w-full mt-1" placeholder="e.g., 8000" value="${appState.netMonthlyPaycheck || ''}">
                     </div>
                     <div>
-                        <label for="fixedExpenses" class="block text-sm font-medium text-[#3D352E]">Total Fixed Expenses ($)</label>
+                        <label for="fixedExpenses" class="block text-sm font-medium text-gray-700">Total Fixed Expenses ($)</label>
                         <input type="number" id="fixedExpenses" class="w-full mt-1" placeholder="Rent, min debt payments, etc." value="${appState.fixedExpenses || ''}">
                     </div>
-                    <div id="availableCashResult" class="text-center font-bold text-2xl text-[#A67B5B] h-8">Available Cash: $${appState.availableCash.toLocaleString()}</div>
+                    <div id="availableCashResult" class="text-center font-bold text-2xl text-brand-primary h-8">Available Cash: $${appState.availableCash.toLocaleString()}</div>
                 </div>
                 <!--Step 2-->
-                <div class="space-y-4 p-6 bg-[#FDFBF8] rounded-lg border border-[#EAE0D5]">
-                    <h3 class="font-semibold text-lg mb-2">Step 2: Map Your Top 3 Cash Leaks</h3>
-                    <p class="text-sm text-[#796A5C]">
+                <div class="space-y-4 p-6 bg-[#F9FAFB] rounded-lg border border-gray-200">
+                    <h3 class="font-semibold text-lg mb-2 text-gray-800">Step 2: Map Your Top 3 Cash Leaks</h3>
+                    <p class="text-sm text-gray-600">
                         Enter your top 3 variable spending categories from the last month.
                     </p>
                     ${appState.cashLeaks.map((leak, index) => `
@@ -167,25 +173,25 @@ function renderAuditTab() {
                 </div>
             </div>
             <!--Step 3-->
-            <div class="mt-8 p-6 bg-[#FDFBF8] rounded-lg border border-[#EAE0D5]">
-                <h3 class="font-semibold text-lg mb-2">Step 3: Vision - Your Motivation Engine</h3>
-                <p class="text-sm text-[#796A5C] mb-6">
+            <div class="mt-8 p-6 bg-[#F9FAFB] rounded-lg border border-gray-200 shadow-sm">
+                <h3 class="font-semibold text-lg mb-2 text-gray-800">Step 3: Vision - Your Motivation Engine</h3>
+                <p class="text-sm text-gray-600 mb-6">
                     Define **ONE** clear, measurable short-term goal to be funded by closing your Cash Leaks.
                 </p>
                 <div class="grid md:grid-cols-3 gap-4">
                     <div>
-                        <label for="goalTitle" class="block text-sm font-medium text-[#3D352E]">Goal Title</label>
+                        <label for="goalTitle" class="block text-sm font-medium text-gray-700">Goal Title</label>
                         <input type="text" id="goalTitle" class="w-full mt-1" placeholder="e.g., European Trip Fund"
                             value="">
                     </div>
                     <div>
-                        <label for="goalAmount" class="block text-sm font-medium text-[#3D352E]">Target Amount
+                        <label for="goalAmount" class="block text-sm font-medium text-gray-700">Target Amount
                             ($)</label>
                         <input type="number" id="goalAmount" class="w-full mt-1" placeholder="e.g., 5000"
                             value="">
                     </div>
                     <div>
-                        <label for="goalDate" class="block text-sm font-medium text-[#3D352E]">Target Completion Date</label>
+                        <label for="goalDate" class="block text-sm font-medium text-gray-700">Target Completion Date</label>
                         <input type="date" id="goalDate" class="w-full mt-1" value="">
                     </div>
                 </div>
@@ -246,7 +252,7 @@ function renderCashLeaksChart() {
         datasets: [{
             label: 'Monthly Spending',
             data: appState.cashLeaks.map(l => l.amount),
-            backgroundColor: ['#A67B5B', '#D9CBBF', '#EAE0D5'],
+            backgroundColor: [COLOR_PRIMARY, COLOR_NEUTRAL, COLOR_ACCENT],
             borderRadius: 4,
         }]
     };
@@ -269,29 +275,30 @@ function renderBlueprintTab() {
 
     const content = `
         <div class="animate-fade-in">
-            <h2 class="text-2xl font-bold mb-4 text-[#A67B5B]">Module 3: The Implementable Spending Plan</h2>
-            <p class="mb-6 text-[#796A5C]">
+            <h2 class="text-2xl font-bold mb-4 text-brand-primary">Module 3: The Implementable Spending Plan</h2>
+            <p class="mb-6 text-gray-600">
                 This is where strategy meets action. Use your available cash to create a concrete, automated plan. Assign every dollar a job, starting with "Future You."
             </p>
             <div class="grid md:grid-cols-3 gap-8">
-                <div class="md:col-span-2 space-y-6 p-6 bg-[#FDFBF8] rounded-lg border border-[#EAE0D5]">
+                <div class="md:col-span-2 space-y-6 p-6 bg-[#F9FAFB] rounded-lg border border-gray-200 shadow-sm">
                     
                     <div class="flex justify-between items-center bg-white p-4 rounded shadow-sm">
                         <p class="font-semibold">Available Cash to Plan:</p>
-                        <p class="font-bold text-xl text-[#A67B5B]">$${appState.availableCash.toLocaleString()}</p>
+                        <p class="font-bold text-xl text-green-700">$${appState.availableCash.toLocaleString()}</p>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium">Wealth (Future You) - Target 20%</label>
-                        <p class="text-lg font-semibold text-green-700">$${wealthTarget.toLocaleString()}</p>
+                        <label class="block text-sm font-medium text-gray-700">Wealth (Future You) - Target 20%</label>
+                        <p class="text-lg font-semibold text-brand-primary">$${wealthTarget.toLocaleString()}</p>
+                        <p class="text-sm text-gray-400">This is the amount you'll allocate to your future self. It's a commitment to your wealth-building journey.</p>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium">Aggressive Debt Attack ($)</label>
+                        <label class="block text-sm font-medium text-gray-700">Aggressive Debt Attack ($)</label>
                         <input type="number" id="debtAcceleration" class="w-full mt-1 border p-2 rounded" value="${appState.spendingPlan.debtAcceleration || ''}">
                     </div>
 
-                    <h4 class="font-semibold pt-4 border-t border-[#EAE0D5]">Guilt-Free Spending Buckets (Wants)</h4>
+                    <h4 class="font-semibold pt-4 border-t border-gray-200 text-gray-800">Guilt-Free Spending Buckets (Wants) - Target &#8804; 30%</h4>
                     <div id="guiltFreeBucketsContainer" class="space-y-3">
                         ${appState.spendingPlan.guiltFreeBuckets.map((bucket, index) => `
                             <div class="grid grid-cols-2 gap-2">
@@ -300,12 +307,12 @@ function renderBlueprintTab() {
                             </div>
                         `).join('')}
                     </div>
-                    <button id="addBucket" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 text-sm font-semibold">+ Add Bucket</button>
-                    <button id="removeBucket" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 text-sm font-semibold">- Remove Bucket</button>
+                    <button id="addBucket" class="btn-secondary text-sm py-2 px-4 rounded-lg font-medium">+ Add Bucket</button>
+                    <button id="removeBucket" class="btn-secondary text-sm py-2 px-4 rounded-lg font-medium">- Remove Bucket</button>
 
-                    <div class="mt-4 p-4 bg-white rounded-lg shadow-sm">
+                    <div class="mt-4 p-4 bg-white rounded-lg shadow-sm border border-gray-100">
                         <div class="flex justify-between items-center">
-                            <p class="font-semibold">Remaining for Needs (Essentials):</p>
+                            <p class="font-semibold text-gray-700">Remaining for Needs (Essentials):</p>
                             <p id="remainingForNeeds" class="font-bold text-xl ${remainingForPlan < 0 ? 'text-red-600' : 'text-blue-700'}">$${remainingForPlan.toLocaleString()}</p>
                         </div>
                         <p class="text-xs text-gray-500">This remaining amount must cover your variable essential spending (groceries, gas, etc.).</p>
@@ -385,7 +392,7 @@ function renderPlanDonutChart() {
 
     let dataLabels = ['Wealth Target'];
     let dataAmounts = [wealthTarget];
-    let dataColors = ['#5F8670'];
+    let dataColors = [COLOR_PRIMARY];
 
     if (remainingNeeds < 0) {
         dataLabels.push('Over-Allocated');
@@ -396,12 +403,12 @@ function renderPlanDonutChart() {
 
     dataLabels.push('Needs (Essentials)');
     dataAmounts.push(remainingNeeds);
-    dataColors.push('#A67B5B');
+    dataColors.push('#1447E6');
 
     if (appState.spendingPlan.debtAcceleration > 0) {
         dataLabels.push('Debt Attack');
         dataAmounts.push(appState.spendingPlan.debtAcceleration);
-        dataColors.push('#D9CBBF');
+        dataColors.push(COLOR_NEUTRAL);
     }
 
     //Guilt Free Buckets
@@ -409,7 +416,7 @@ function renderPlanDonutChart() {
         if (bucket.amount > 0) {
             dataLabels.push(bucket.name);
             dataAmounts.push(bucket.amount);
-            dataColors.push(['#EAE0D5', '#B4A596', '#796A5C', '#615449'][dataLabels.length % 4]);
+            dataColors.push(['#FFF1C2', '#F5D77A', '#E3B94A', '#C99A17'][dataLabels.length % 4]);
         }
     });
 
@@ -448,34 +455,34 @@ function renderAutomateTab() {
 
     const content = `
         <div class="animate-fade-in">
-            <h2 class="text-2xl font-bold mb-4 text-[#A67B5B]">Module 4: Automation & Boundary Lock-In</h2>
-            <p class="mb-6 text-[#796A5C]">
+            <h2 class="text-2xl font-bold mb-4 text-brand-primary">Module 4: Automation & Boundary Lock-In</h2>
+            <p class="mb-6 text-gray-600">
                 A plan is only as good as its execution. Here, we lock in your new habits through automation and prepare you to protect your financial boundaries.
             </p>
             <div class="grid md:grid-cols-2 gap-8">
-                <div class="p-6 bg-[#FDFBF8] rounded-lg border border-[#EAE0D5]">
+                <div class="p-6 bg-[#F9FAFB] rounded-lg border border-gray-200">
                     <h3 class="font-semibold text-lg mb-4">The Two-Transfer Automation System</h3>
-                    <p class="text-sm text-[#796A5C] mb-4">Commit to setting up these two automated transfers to occur the day after your paycheck hits your account.</p>
+                    <p class="text-sm text-gray-600 mb-4">Commit to setting up these two automated transfers to occur the day after your paycheck hits your account.</p>
                     <ul class="space-y-4">
                         <li class="flex items-start">
-                            <input type="checkbox" class="mt-1" ${debtChecked} onchange="toggleAutomationCheck('debtTransfer', this.checked)">
+                            <input type="checkbox" class="mt-1 text-brand-primary" ${debtChecked} onchange="toggleAutomationCheck('debtTransfer', this.checked)">
                             <label class="ml-3 text-sm">
-                                <span class="font-semibold block">Transfer 1: Debt Acceleration</span>
-                                Transfer <span class="font-bold">$${debtAmount}</span> to your primary debt target.
+                                <span class="font-semibold block text-gray-900">Transfer 1: Debt Acceleration</span>
+                                Transfer <span class="font-bold text-brand-primary">$${debtAmount}</span> to your primary debt target.
                             </label>
                         </li>
                         <li class="flex items-start">
-                            <input type="checkbox" class="mt-1" ${wealthChecked} onchange="toggleAutomationCheck('wealthTransfer', this.checked)">
+                            <input type="checkbox" class="mt-1 text-brand-primary" ${wealthChecked} onchange="toggleAutomationCheck('wealthTransfer', this.checked)">
                             <label class="ml-3 text-sm">
-                                <span class="font-semibold block">Transfer 2: Investment/Savings</span>
-                                Transfer <span class="font-bold">$${wealthAmount}</span> to your brokerage or savings.
+                                <span class="font-semibold block text-gray-900">Transfer 2: Investment/Savings</span>
+                                Transfer <span class="font-bold text-brand-primary">$${wealthAmount}</span> to your brokerage or savings.
                             </label>
                         </li>
                     </ul>
                 </div>
-                <div class="p-6 bg-[#FDFBF8] rounded-lg border border-[#EAE0D5]">
+                <div class="p-6 bg-[#F9FAFB] rounded-lg border border-gray-200">
                     <h3 class="font-semibold text-lg mb-4">The Boundary Protocol</h3>
-                    <p class="text-sm text-[#796A5C] mb-4">High-earners protect their money with clear boundaries.
+                    <p class="text-sm text-gray-600 mb-4">High-earners protect their money with clear boundaries.
                         Here are scripts to practice.
                     </p>
                     <div class="space-y-4">
@@ -483,10 +490,10 @@ function renderAutomateTab() {
                             <div class="prompt-card" onclick="this.classList.toggle('open')">
                                 <div class="flex justify-between items-center">
                                     <h4 class="font-semibold">${p.q}</h4>
-                                    <span class="text-xl text-[#A67B5B]">&#9662;</span>
+                                    <span class="text-xl text-brand-accent">&#9662;</span>
                                 </div>
                                 <div class="answer pt-2">
-                                    <p class="text-sm text-[#796A5C]">${p.a}</p>
+                                    <p class="text-sm text-gray-600">${p.a}</p>
                                 </div>
                             </div>
                         `).join('')}
@@ -512,8 +519,8 @@ function toggleAutomationCheck(key, isChecked) {
 function renderNextStepsTab() {
     const content = `
         <div class="animate-fade-in text-center max-w-2xl mx-auto">
-            <h2 class="text-2xl font-bold mb-4 text-[#A67B5B]">Closing & Next Steps</h2>
-            <p class="mb-6 text-[#796A5C]">You now have the map: Your implementable spending plan. The next step is getting your personalized GPS. While this workshop provides the strategy, one-on-one coaching tailors it to your unique income, debt reality, and long-term goals.</p>
+            <h2 class="text-2xl font-bold mb-4 text-brand-primary">Closing & Next Steps</h2>
+            <p class="mb-6 text-gray-600">You now have the map: Your implementable spending plan. The next step is getting your personalized GPS. While this workshop provides the strategy, one-on-one coaching tailors it to your unique income, debt reality, and long-term goals.</p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
                     <a href="mailto:prea.epps@reframedfinancialcoaching.com?subject=Discovery%20Call%20Request&body=Hi,%20I%20would%20like%20to%20schedule%20a%20private%20discovery%20call." 
                     class="btn-primary w-full sm:w-auto py-3 px-6 rounded-lg font-semibold text-center">
@@ -528,8 +535,6 @@ function renderNextStepsTab() {
     `;
     document.getElementById('main-content-area').innerHTML = content;
 }
-
-// Email
 
 // Navigation Tab Handlers
 function navigate(tabName) {
@@ -562,4 +567,4 @@ document.querySelectorAll('.tab-button').forEach(button => {
 
 // Start App
 loadFromLocalStorage();
-navigate('mindset');
+navigate('blueprint'); // Default to Blueprint tab on load

@@ -1,65 +1,82 @@
 @import "tailwindcss";
+:root {
+    /* Updated Custom Palette */
+    --brand-primary: #530D6C;   /* Purple */
+    --brand-hover: #3E0A51;     /* Darker Purple */
+    --brand-accent: #FCB80B;    /* Gold */
+    --text-main: #1C1C1C;       /* Dark Grey */
+    --text-muted: #666666;      /* Accessible Grey */
+    --bg-page: #F0F0F0;         /* Light Grey */
+    --bg-card: #FFFFFF;         /* White */
+    --border-color: #BBBBBB;    /* Medium Grey */
+}
 
 body {
     font-family: 'Inter', sans-serif;
-    background-color: #FDFBF8;
-    color: #3D352E;
+    background-color: var(--bg-page);
+    color: var(--text-main);
 }
 
 .tab-active {
-    border-bottom: 2px solid #A67B5B;
-    color: #A67B5B;
-    font-weight: 600;
+    border-bottom: 3px solid var(--brand-primary);
+    color: var(--brand-primary);
+    font-weight: 700;
 }
 
 .tab-inactive {
-    color: #796A5C;
+    color: var(--text-muted);
+}
+
+.tab-inactive:hover {
+    color: var(--brand-primary);
 }
 
 .tab-locked {
-    color: #B9C3C9;
+    color: #D1D5DB;
     cursor: not-allowed;
 }
 
 .main-content {
-    background-color: #FFFFFF;
-    border: 1px solid #EAE0D5;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .btn-primary {
-    background-color: #A67B5B;
-    color: #FFFFFF;
+    background-color: var(--brand-primary);
+    color: var(--bg-card);
     transition: background-color 0.3s ease;
 }
 
 .btn-primary:hover {
-    background-color: #8C664A;
+    background-color: var(--brand-hover);
 }
 
 .btn-secondary {
-    background-color: #EAE0D5;
-    color: #3D352E;
-    transition: background-color 0.3s ease;
+    background-color: var(--bg-card);
+    color: var(--brand-primary);
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
 }
 
 .btn-secondary:hover {
-    background-color: #D9CBBF;
+    background-color: #F3F4F6;
+    border-color: var(--brand-primary);
 }
 
-input,
-select {
-    border: 1px solid #D9CBBF;
+input, select {
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 8px 12px;
-    background-color: #FDFBF8;
+    background-color: var(--bg-card);
+    color: var(--text-main);
 }
 
-input:focus,
-select:focus {
-    outline: 2px solid #A67B5B;
-    border-color: #A67B5B;
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 3px rgba(83, 13, 108, 0.1);
 }
 
 .chart-container {
@@ -79,8 +96,8 @@ select:focus {
 }
 
 .prompt-card {
-    background-color: #FDFBF8;
-    border: 1px solid #EAE0D5;
+    background-color: #f9fafb;
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 16px;
     cursor: pointer;
@@ -89,7 +106,8 @@ select:focus {
 
 .prompt-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border-color: var(--brand-accent);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.01);
 }
 
 .prompt-card .answer {
@@ -102,16 +120,10 @@ select:focus {
     max-height: 200px;
 }
 
-.loading-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(255, 255, 255, 0.9);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 10;
-    border-radius: 12px;
+.text-brand-primary { 
+    color: var(--brand-primary); 
+}
+
+.text-brand-accent { 
+    color: var(--brand-accent); 
 }
