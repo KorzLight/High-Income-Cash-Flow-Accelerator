@@ -11,9 +11,9 @@ const boundaryProtocols = [
 ];
 
 //Brand Colors js
-    const COLOR_PRIMARY = '#530D6C';
-    const COLOR_ACCENT = '#FCB80B';
-    const COLOR_NEUTRAL = '#4A4A4A';
+const COLOR_PRIMARY = '#530D6C';
+const COLOR_ACCENT = '#FCB80B';
+const COLOR_NEUTRAL = '#4A4A4A';
 
 // Application State
 let appState = {
@@ -116,7 +116,7 @@ function renderMindsetTab() {
 // Draw Concept Donut Chart
 function renderConceptDonutChart() {
     const ctx = document.getElementById('conceptDonutChart')?.getContext('2d');
-    if (!ctx) return; 
+    if (!ctx) return;
     const data = {
         labels: ['Wealth (Future You)', 'Needs (Essentials)', 'Wants (Today\'s Joy)'],
         datasets: [{
@@ -126,9 +126,9 @@ function renderConceptDonutChart() {
             borderWidth: 2,
         }]
     };
-    const options = { 
-        responsive: true, maintainAspectRatio: false, 
-        plugins: { legend: { position: 'bottom' }, tooltip: { callbacks: { label: (c) => `${c.label}: ${c.raw}%` } } } 
+    const options = {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom' }, tooltip: { callbacks: { label: (c) => `${c.label}: ${c.raw}%` } } }
     };
     initChart(ctx, 'doughnut', data, options)
 }
@@ -257,9 +257,9 @@ function renderCashLeaksChart() {
         }]
     };
     const options = {
-                indexAxis: 'y', responsive: true, maintainAspectRatio: false, 
-                plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => `$${c.raw.toLocaleString()}` } } },
-                scales: { x: { beginAtZero: true } }
+        indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => `$${c.raw.toLocaleString()}` } } },
+        scales: { x: { beginAtZero: true } }
     };
     initChart(ctx, 'bar', data, options);
 }
@@ -353,7 +353,7 @@ function renderBlueprintTab() {
         if (currentRemaining < 0) {
             remEl.classList.remove('text-blue-700'); // Remove blue
             remEl.classList.add('text-red-600');     // Add red
-        } 
+        }
         else {
             remEl.classList.remove('text-red-600');  // Remove red
             remEl.classList.add('text-blue-700');    // Add blue
@@ -429,7 +429,7 @@ function renderPlanDonutChart() {
             borderWidth: 2,
         }]
     };
-    
+
     const options = {
         responsive: true, maintainAspectRatio: false,
         plugins: { legend: { position: 'bottom' }, tooltip: { callbacks: { label: (c) => `${c.label}: $${c.raw.toLocaleString()}` } } }
@@ -448,7 +448,7 @@ function renderAutomateTab() {
     // 2. Dynamic values from appState
     const debtAmount = (appState.spendingPlan.debtAcceleration || 0).toLocaleString();
     const wealthAmount = (appState.spendingPlan.wealth || 0).toLocaleString();
-    
+
     // 3. Determine Checkbox State strings
     const debtChecked = appState.automation.debtTransfer ? 'checked' : '';
     const wealthChecked = appState.automation.wealthTransfer ? 'checked' : '';
@@ -510,7 +510,7 @@ function toggleAutomationCheck(key, isChecked) {
     if (!appState.automation) {
         appState.automation = { debtTransfer: false, wealthTransfer: false };
     }
-    
+
     appState.automation[key] = isChecked;
     saveToLocalStorage();
 }

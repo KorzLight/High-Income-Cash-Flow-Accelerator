@@ -1,14 +1,23 @@
 @import "tailwindcss";
+
 :root {
     /* Updated Custom Palette */
-    --brand-primary: #530D6C;   /* Purple */
-    --brand-hover: #3E0A51;     /* Darker Purple */
-    --brand-accent: #FCB80B;    /* Gold */
-    --text-main: #1C1C1C;       /* Dark Grey */
-    --text-muted: #666666;      /* Accessible Grey */
-    --bg-page: #F0F0F0;         /* Light Grey */
-    --bg-card: #FFFFFF;         /* White */
-    --border-color: #BBBBBB;    /* Medium Grey */
+    --brand-primary: #530D6C;
+    /* Purple */
+    --brand-hover: #3E0A51;
+    /* Darker Purple */
+    --brand-accent: #FCB80B;
+    /* Gold */
+    --text-main: #1C1C1C;
+    /* Dark Grey */
+    --text-muted: #666666;
+    /* Accessible Grey */
+    --bg-page: #F0F0F0;
+    /* Light Grey */
+    --bg-card: #FFFFFF;
+    /* White */
+    --border-color: #BBBBBB;
+    /* Medium Grey */
 }
 
 body {
@@ -25,6 +34,7 @@ body {
 
 .tab-inactive {
     color: var(--text-muted);
+    cursor: pointer;
 }
 
 .tab-inactive:hover {
@@ -65,7 +75,8 @@ body {
     border-color: var(--brand-primary);
 }
 
-input, select {
+input,
+select {
     border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 8px 12px;
@@ -73,7 +84,8 @@ input, select {
     color: var(--text-main);
 }
 
-input:focus, select:focus {
+input:focus,
+select:focus {
     outline: none;
     border-color: var(--brand-primary);
     box-shadow: 0 0 0 3px rgba(83, 13, 108, 0.1);
@@ -88,6 +100,7 @@ input:focus, select:focus {
     height: 300px;
     max-height: 350px;
 }
+
 @media (min-width: 768px) {
     .chart-container {
         height: 350px;
@@ -120,10 +133,10 @@ input:focus, select:focus {
     max-height: 200px;
 }
 
-.text-brand-primary { 
-    color: var(--brand-primary); 
+.text-brand-primary {
+    color: var(--brand-primary);
 }
 
-.text-brand-accent { 
-    color: var(--brand-accent); 
+.text-brand-accent {
+    color: var(--brand-accent);
 }
