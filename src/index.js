@@ -520,7 +520,16 @@ function renderNextStepsTab() {
     const content = `
         <div class="animate-fade-in text-center max-w-2xl mx-auto">
             <h2 class="text-2xl font-bold mb-4 text-brand-primary">Closing & Next Steps</h2>
-            <p class="mb-6 text-gray-600">You now have the map: Your implementable spending plan. The next step is getting your personalized GPS. While this workshop provides the strategy, one-on-one coaching tailors it to your unique income, debt reality, and long-term goals.</p>
+            <p class="mb-6 text-gray-600">You now have the map: Your implementable spending plan. You can print a summary of your work below to keep it on your desk or fridge.</p>
+            
+            <button id="printSummaryBtn" class="mb-8 flex items-center justify-center mx-auto text-brand-primary border border-brand-primary hover:bg-gray-50 font-medium rounded-lg text-sm px-5 py-2.5 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0 0 21 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 0 0-1.913-.247M6.34 18H5.25A2.25 2.25 0 0 1 3 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 0 1 1.913-.247m10.5 0a48.536 48.536 0 0 0-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5Zm-3 0h.008v.008H15V10.5Z" />
+                </svg>
+                Print Workshop Summary
+            </button>
+
+            <p class="mb-6 text-gray-600">While this workshop provides the strategy, one-on-one coaching tailors it to your unique income, debt reality, and long-term goals.</p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
                     <a href="mailto:prea.epps@reframedfinancialcoaching.com?subject=Discovery%20Call%20Request&body=Hi,%20I%20would%20like%20to%20schedule%20a%20private%20discovery%20call." 
                     class="btn-primary w-full sm:w-auto py-3 px-6 rounded-lg font-semibold text-center">
@@ -534,6 +543,138 @@ function renderNextStepsTab() {
         </div>
     `;
     document.getElementById('main-content-area').innerHTML = content;
+
+    // Attach Event Listener for the Print Button
+    document.getElementById('printSummaryBtn').addEventListener('click', generateAndPrintSummary);
+}
+
+// --- PRINT FUNCTIONALITY ---
+function generateAndPrintSummary() {
+    // 1. Calculate final numbers based on current App State
+    const wealthTarget = appState.spendingPlan.wealth || 0;
+    const debtAccel = appState.spendingPlan.debtAcceleration || 0;
+
+    // Sum up guilt-free buckets
+    const totalWantsBuckets = appState.spendingPlan.guiltFreeBuckets.reduce((sum, b) => sum + (b.amount || 0), 0);
+    const totalWants = debtAccel + totalWantsBuckets;
+
+    // Calculate Needs
+    const needsAmount = appState.availableCash - wealthTarget - totalWants;
+
+    // 2. Generate Date String
+    const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+    // 3. Build HTML Template
+    const printHTML = `
+        <div class="print-header">
+            <h1 style="color: #530D6C; font-size: 24px; font-weight: bold; margin-bottom: 5px;">High-Income Cash Flow Accelerator</h1>
+            <p style="color: #666; font-size: 14px;">Workshop Summary • Generated on ${today}</p>
+        </div>
+
+        <div class="print-grid">
+            <div class="print-section">
+                <h3 style="font-weight: bold; margin-bottom: 10px; border-bottom: 1px solid #ccc;">1. The Audit</h3>
+                <table class="print-table">
+                    <tr>
+                        <td>Net Monthly Pay:</td>
+                        <td style="text-align:right"><strong>$${(appState.netMonthlyPaycheck || 0).toLocaleString()}</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Fixed Expenses:</td>
+                        <td style="text-align:right; color: #666;">- $${(appState.fixedExpenses || 0).toLocaleString()}</td>
+                    </tr>
+                    <tr style="background-color: #f9f9f9;">
+                        <td style="padding: 10px 0;"><strong>True Available Cash:</strong></td>
+                        <td style="text-align:right; font-weight:bold; color: #530D6C;">$${(appState.availableCash || 0).toLocaleString()}</td>
+                    </tr>
+                </table>
+            </div>
+
+             <div class="print-section">
+                <h3 style="font-weight: bold; margin-bottom: 10px; border-bottom: 1px solid #ccc;">2. The Goal (Vision)</h3>
+                <p style="margin-bottom: 5px;"><strong>Goal:</strong> ${appState.shortTermGoal.title || 'Not set'}</p>
+                <p style="margin-bottom: 5px;"><strong>Target:</strong> $${(appState.shortTermGoal.amount || 0).toLocaleString()}</p>
+                <p><strong>By:</strong> ${appState.shortTermGoal.targetDate || 'No date set'}</p>
+
+                <div style="margin-top: 15px;">
+                    <p style="font-size: 12px; font-weight: bold; color: #666;">IDENTIFIED CASH LEAKS:</p>
+                    <ul style="font-size: 12px; margin-left: 15px;">
+                        ${appState.cashLeaks.filter(l => l.category).map(l => `<li>${l.category}: $${l.amount}</li>`).join('') || '<li>No leaks recorded</li>'}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="print-section">
+            <h3 style="font-weight: bold; margin-bottom: 10px; border-bottom: 1px solid #ccc;">3. The Spending Plan</h3>
+            <p style="font-size: 14px; color: #666; margin-bottom: 10px;">Allocating your <strong>$${(appState.availableCash || 0).toLocaleString()}</strong> of available cash.</p>
+            
+            <table class="print-table" style="font-size: 14px;">
+                <thead>
+                    <tr style="background-color: #f0f0f0;">
+                        <th style="padding: 8px;">Category</th>
+                        <th style="padding: 8px; text-align: right;">Allocation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="padding: 8px; color: #530D6C; font-weight: bold;">Wealth (Future You)</td>
+                        <td style="padding: 8px; text-align: right; font-weight: bold;">$${wealthTarget.toLocaleString()}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; color: #1447E6; font-weight: bold;">Needs (Essentials)</td>
+                        <td style="padding: 8px; text-align: right; font-weight: bold;">$${needsAmount.toLocaleString()}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; font-weight: bold;">Wants (Total)</td>
+                        <td style="padding: 8px; text-align: right;">$${totalWants.toLocaleString()}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 4px 8px 4px 20px; font-size: 12px;">↳ Debt Acceleration</td>
+                        <td style="padding: 4px 8px; text-align: right; font-size: 12px;">$${debtAccel.toLocaleString()}</td>
+                    </tr>
+                    ${appState.spendingPlan.guiltFreeBuckets.filter(b => b.name).map(b => `
+                    <tr>
+                        <td style="padding: 4px 8px 4px 20px; font-size: 12px;">↳ Bucket: ${b.name}</td>
+                        <td style="padding: 4px 8px; text-align: right; font-size: 12px;">$${(b.amount || 0).toLocaleString()}</td>
+                    </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="print-section">
+            <h3 style="font-weight: bold; margin-bottom: 10px; border-bottom: 1px solid #ccc;">4. Automation Commitments</h3>
+            <ul style="list-style: none;">
+                <li style="margin-bottom: 8px;">
+                    <span style="font-size: 18px;">${appState.automation.debtTransfer ? '☑' : '☐'}</span> 
+                    <strong>Debt Transfer:</strong> Auto-transfer $${debtAccel.toLocaleString()} day after payday.
+                </li>
+                <li style="margin-bottom: 8px;">
+                    <span style="font-size: 18px;">${appState.automation.wealthTransfer ? '☑' : '☐'}</span> 
+                    <strong>Wealth Transfer:</strong> Auto-transfer $${wealthTarget.toLocaleString()} day after payday.
+                </li>
+            </ul>
+        </div>
+
+        <div style="margin-top: 40px; text-align: center; color: #666; font-size: 12px;">
+            <p>Created with The High-Income Cash Flow Accelerator</p>
+            <p>www.reframedfinancialcoaching.com</p>
+        </div>
+    `;
+
+    // 4. Inject into DOM (hidden div)
+    let printContainer = document.getElementById('print-area');
+    if (!printContainer) {
+        printContainer = document.createElement('div');
+        printContainer.id = 'print-area';
+        document.body.appendChild(printContainer);
+    }
+
+    printContainer.innerHTML = printHTML;
+
+    // 5. Trigger Print
+    window.print();
 }
 
 // Navigation Tab Handlers

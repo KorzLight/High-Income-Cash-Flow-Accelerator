@@ -1,23 +1,14 @@
 @import "tailwindcss";
 
 :root {
-    /* Updated Custom Palette */
     --brand-primary: #530D6C;
-    /* Purple */
     --brand-hover: #3E0A51;
-    /* Darker Purple */
     --brand-accent: #FCB80B;
-    /* Gold */
     --text-main: #1C1C1C;
-    /* Dark Grey */
     --text-muted: #666666;
-    /* Accessible Grey */
     --bg-page: #F0F0F0;
-    /* Light Grey */
     --bg-card: #FFFFFF;
-    /* White */
     --border-color: #BBBBBB;
-    /* Medium Grey */
 }
 
 body {
@@ -139,4 +130,64 @@ select:focus {
 
 .text-brand-accent {
     color: var(--brand-accent);
+}
+
+#print-area {
+    display: none;
+}
+
+
+@media print {
+
+    #app,
+    .no-print {
+        display: none !important;
+    }
+
+    #print-area {
+        display: block !important;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: white;
+        font-family: 'Inter', sans-serif;
+        color: #1C1C1C;
+        z-index: 9999;
+    }
+
+    .print-header {
+        border-bottom: 2px solid #530D6C;
+        padding-bottom: 20px;
+        margin-bottom: 30px;
+    }
+
+    .print-section {
+        margin-bottom: 30px;
+        break-inside: avoid;
+    }
+
+    .print-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .print-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+    .print-table th {
+        text-align: left;
+        border-bottom: 1px solid #BBBBBB;
+        padding: 5px 0;
+    }
+
+    .print-table td {
+        padding: 5px 0;
+        border-bottom: 1px solid #eee;
+    }
 }
