@@ -1,8 +1,14 @@
+const DEV_MODE = true;
+
+if (DEV_MODE) {
+    localStorage.removeItem('appState');
+}
+
 // --- 1. STATIC DATA (Content Arrays) ---
 const journalPrompts = [
-    { q: "Unmasking the Root Cause", a: "What is the one emotion (stress, guilt, exhaustion) that drives your impulse spending?" },
-    { q: "Aligning Choices with Values", a: "Are my financial choices aligning with my core values? What would I sacrifice in my current spending to achieve my bigger financial goals?" },
-    { q: "Releasing Limiting Beliefs", a: "How were you raised to think about money? What are some of your fears/concerns related to it?" }
+    { q: "The Emotional Trigger", a: "What is the one emotion (stress, guilt, exhaustion) that drives your impulse spending?" },
+    { q: "Values Alignment", a: "Are my financial choices aligning with my core values? What would I sacrifice in my current spending to achieve my bigger financial goals?" },
+    { q: "The Money Script", a: "How were you raised to think about money? What are some of your fears/concerns related to it?" }
 ];
 
 const boundaryProtocols = [
@@ -20,6 +26,7 @@ let appState = {
     netMonthlyPaycheck: 0,
     fixedExpenses: 0,
     availableCash: 0,
+    totalLeaks: 0,
     cashLeaks: [
         { category: '', amount: 0 },
         { category: '', amount: 0 },
@@ -34,13 +41,15 @@ let appState = {
         wealth: 0,
         debtAcceleration: 0,
         guiltFreeBuckets: [
-            { name: 'Dining Out', amount: 0 },
-            { name: 'Entertainment', amount: 0 }
+            { name: '', amount: 0 },
+            { name: '', amount: 0 },
+            { name: '', amount: 0 }
         ]
     },
     automation: {
         debtTransfer: false,
-        wealthTransfer: false
+        wealthTransfer: false,
+        shortTermTransfer: false
     }
 };
 
@@ -57,22 +66,46 @@ function loadFromLocalStorage() {
     }
 }
 
-// Update Available Cash Display
-function updateAvailableCashDisplay() {
-    const el = document.getElementById('availableCashResult');
-    if (!el) return;
-    el.textContent = `Available Cash: $${appState.availableCash.toLocaleString()}`;
-}
 
 // Chart Instances
-const charts = {}; // Holds chart instances to prevent "flickering"
+const charts = {};
 
-function initChart(ctx, type, data, options) {
+function initChart(ctx, type, data, options, plugins = []) {
     if (charts[ctx.canvas.id]) {
         charts[ctx.canvas.id].destroy();
     }
-    charts[ctx.canvas.id] = new Chart(ctx, { type, data, options });
+
+    charts[ctx.canvas.id] = new Chart(ctx, {
+        type,
+        data,
+        options,
+        plugins
+    });
 }
+
+const emptyStatePlugin = {
+    id: 'emptyState',
+    beforeDraw(chart) {
+        const dataset = chart.data.datasets[0];
+        const hasData =
+            dataset &&
+            Array.isArray(dataset.data) &&
+            dataset.data.some(v => v > 0);
+
+        if (!hasData) {
+            const { ctx, width, height } = chart;
+
+            ctx.save();
+            ctx.clearRect(0, 0, width, height);
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.font = '16px sans-serif';
+            ctx.fillStyle = '#9CA3AF';
+            ctx.fillText('Waiting for data…', width / 2, height / 2);
+            ctx.restore();
+        }
+    }
+};
 
 // Render Functions
 
@@ -127,17 +160,32 @@ function renderConceptDonutChart() {
         }]
     };
     const options = {
-        responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { position: 'bottom' }, tooltip: { callbacks: { label: (c) => `${c.label}: ${c.raw}%` } } }
+        responsive: true, 
+        maintainAspectRatio: false,
+        plugins: { 
+            legend: { position: 'bottom' },
+            datalabels: {
+                backgroundColor: 'rgba(0,0,0,0.3)',
+                borderRadius: 20,
+                padding: 6,
+                color: '#FFFFFF',
+                font: { weight: 'bold', size: 15 },
+                formatter: (value) => value + '%'
+            },
+            tooltip: {
+                callbacks: {
+                    label: (context) => {
+                        return ` ${context.raw}%`;
+                    }
+                }
+            }
+        }
     };
-    initChart(ctx, 'doughnut', data, options)
+    initChart(ctx, 'doughnut', data, options, [ChartDataLabels]);
 }
 
 // -- TAB 2: AUDIT --
 function renderAuditTab() {
-    // Ensure calculation is fresh
-    appState.availableCash = appState.netMonthlyPaycheck - appState.fixedExpenses;
-
     const content = `
         <div class="fade-in">
             <h2 class="text-2xl font-bold mb-4 text-brand-primary">Module 2: The Cash Flow Audit & Vision</h2>
@@ -166,62 +214,63 @@ function renderAuditTab() {
                     </p>
                     ${appState.cashLeaks.map((leak, index) => `
                         <div class="grid grid-cols-2 gap-2">
-                            <input type="text" data-leak-category="${index}" class="w-full text-sm border p-2 rounded" placeholder="Category" value="${leak.category}">
+                            <input type="text" data-leak-category="${index}" class="w-full text-sm border p-2 rounded" placeholder="Category" value="${leak.category || ''}">
                             <input type="number" data-leak-amount="${index}" class="w-full text-sm border p-2 rounded" placeholder="Amount ($)" value="${leak.amount || ''}">
                         </div>
                     `).join('')}
+                    <div id="totalCashLeaks" class="text-center font-bold text-2xl text-red-900 h-8">Total Cash Leaks: $${appState.totalLeaks.toLocaleString()}</div>
                 </div>
             </div>
             <!--Step 3-->
             <div class="mt-8 p-6 bg-[#F9FAFB] rounded-lg border border-gray-200 shadow-sm">
-                <h3 class="font-semibold text-lg mb-2 text-gray-800">Step 3: Vision - Your Motivation Engine</h3>
+                <h3 class="font-semibold text-lg mb-2 text-gray-800">Step 3: Vision - Short-Term Goal</h3>
                 <p class="text-sm text-gray-600 mb-6">
-                    Define **ONE** clear, measurable short-term goal to be funded by closing your Cash Leaks.
+                    Define one clear, measurable short-term goal to be funded by closing your Cash Leaks.
                 </p>
                 <div class="grid md:grid-cols-3 gap-4">
                     <div>
                         <label for="goalTitle" class="block text-sm font-medium text-gray-700">Goal Title</label>
                         <input type="text" id="goalTitle" class="w-full mt-1" placeholder="e.g., European Trip Fund"
-                            value="">
+                            value="${appState.shortTermGoal.title || ''}">
                     </div>
                     <div>
                         <label for="goalAmount" class="block text-sm font-medium text-gray-700">Target Amount
                             ($)</label>
                         <input type="number" id="goalAmount" class="w-full mt-1" placeholder="e.g., 5000"
-                            value="">
+                            value="${appState.shortTermGoal.amount || ''}">
                     </div>
                     <div>
                         <label for="goalDate" class="block text-sm font-medium text-gray-700">Target Completion Date</label>
-                        <input type="date" id="goalDate" class="w-full mt-1" value="">
+                        <input type="date" id="goalDate" class="w-full mt-1" value="${appState.shortTermGoal.targetDate || ''}">
                     </div>
-                </div>
-                <!--Chart Container-->
-                <div class="chart-container h-48 md:h-56 mt-6">
-                    <canvas id="cashLeaksChart"></canvas>
                 </div>
             </div>
         </div>
     `;
     document.getElementById('main-content-area').innerHTML = content;
-    renderCashLeaksChart();
 
     // -- Event Listeners for Audit --
-
     // Helper to update state and save
     const updateCalculations = () => {
         appState.availableCash = appState.netMonthlyPaycheck - appState.fixedExpenses;
         document.getElementById('availableCashResult').textContent = `Available Cash: $${appState.availableCash.toLocaleString()}`;
-        saveToLocalStorage();
     };
 
+    const updateCashLeaks = () => {
+        appState.totalLeaks = appState.cashLeaks.reduce((sum, leak) => sum + leak.amount, 0);
+        document.getElementById('totalCashLeaks').textContent = `Total Cash Leaks: $${appState.totalLeaks.toLocaleString()}`;
+    };
+    
     document.getElementById('netPay').addEventListener('input', (e) => {
         appState.netMonthlyPaycheck = parseFloat(e.target.value) || 0;
         updateCalculations();
+        saveToLocalStorage();
     });
 
     document.getElementById('fixedExpenses').addEventListener('input', (e) => {
         appState.fixedExpenses = parseFloat(e.target.value) || 0;
         updateCalculations();
+        saveToLocalStorage();
     });
 
     // Cash Leaks Listeners
@@ -230,38 +279,30 @@ function renderAuditTab() {
             const index = parseInt(e.target.dataset.leakCategory ?? e.target.dataset.leakAmount);
             const isCategory = e.target.dataset.leakCategory !== undefined;
 
-            if (isCategory) appState.cashLeaks[index].category = e.target.value;
-            else appState.cashLeaks[index].amount = parseFloat(e.target.value) || 0;
-
-            renderCashLeaksChart();
+            if (isCategory) {
+                appState.cashLeaks[index].category = e.target.value;
+            }
+            else {
+                appState.cashLeaks[index].amount = parseFloat(e.target.value) || 0;
+            }
+            updateCashLeaks();
             saveToLocalStorage();
         });
     });
 
     // Goal Listeners
-    document.getElementById('goalTitle').addEventListener('input', e => { appState.shortTermGoal.title = e.target.value; saveToLocalStorage(); });
-    document.getElementById('goalAmount').addEventListener('input', e => { appState.shortTermGoal.amount = parseFloat(e.target.value) || 0; saveToLocalStorage(); });
-    document.getElementById('goalDate').addEventListener('input', e => { appState.shortTermGoal.targetDate = e.target.value; saveToLocalStorage(); });
-}
-
-function renderCashLeaksChart() {
-    const ctx = document.getElementById('cashLeaksChart')?.getContext('2d');
-    if (!ctx) return;
-    const data = {
-        labels: appState.cashLeaks.map(l => l.category || ''),
-        datasets: [{
-            label: 'Monthly Spending',
-            data: appState.cashLeaks.map(l => l.amount),
-            backgroundColor: [COLOR_PRIMARY, COLOR_NEUTRAL, COLOR_ACCENT],
-            borderRadius: 4,
-        }]
-    };
-    const options = {
-        indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => `$${c.raw.toLocaleString()}` } } },
-        scales: { x: { beginAtZero: true } }
-    };
-    initChart(ctx, 'bar', data, options);
+    document.getElementById('goalTitle').addEventListener('input', e => { 
+        appState.shortTermGoal.title = e.target.value; 
+        saveToLocalStorage();
+     });
+    document.getElementById('goalAmount').addEventListener('input', e => { 
+        appState.shortTermGoal.amount = parseFloat(e.target.value) || 0; 
+        saveToLocalStorage();
+     });
+    document.getElementById('goalDate').addEventListener('input', e => { 
+        appState.shortTermGoal.targetDate = e.target.value; 
+        saveToLocalStorage();
+     });
 }
 
 // -- TAB 3: BLUEPRINT --
@@ -272,6 +313,8 @@ function renderBlueprintTab() {
 
     const totalWants = appState.spendingPlan.debtAcceleration + appState.spendingPlan.guiltFreeBuckets.reduce((sum, b) => sum + b.amount, 0);
     const remainingForPlan = appState.availableCash - wealthTarget - totalWants;
+
+    const monthsToFund = (appState.totalLeaks || 0) === 0 ? 0 : Math.ceil((appState.shortTermGoal.amount || 0) / appState.totalLeaks);
 
     const content = `
         <div class="animate-fade-in">
@@ -294,8 +337,35 @@ function renderBlueprintTab() {
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Aggressive Debt Attack ($)</label>
+                        <label class="block text-sm font-medium text-gray-700">Aggressive Debt Attack ($) (Extra Principal)</label>
                         <input type="number" id="debtAcceleration" class="w-full mt-1 border p-2 rounded" value="${appState.spendingPlan.debtAcceleration || ''}">
+                        <p class="text-sm text-gray-400">This is additional money on top of your wealth target and fixed.</p>
+                    </div>
+
+                    <div>
+                        <h4 class="font-semibold pt-4 pb-2 border-t border-gray-200 text-gray-800">Goal Acceleration (From Leaks)</h4>
+                        <div class="grid md:grid-cols-2 gap-2">
+                            <div>
+                                <label for="shortTermGoalName" class="block text-sm font-medium text-gray-700">Goal Title</label>        
+                                <input id="shortTermGoalName" type="text" class="w-full mt-1" value="${appState.shortTermGoal.title || ''}" disabled>
+                            </div>
+                            <div>
+                                <label for="shortTermGoalAmount" class="block text-sm font-medium text-gray-700">Target ($)</label>
+                                <input id="shortTermGoalAmount" type="number" class="w-full mt-1" value="${appState.shortTermGoal.amount || ''}" disabled>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 mt-4 p-4 bg-white rounded-lg shadow-sm border border-gray-100">
+                            <div class="flex justify-between items-center">
+                                <p class="font-semibold text-lg text-gray-700">Monthly Fuel Identified: $${appState.totalLeaks || "0"}</p>
+                            </div>
+                            <div class="justify-self-end text-center">
+                                <p class="text-3xl font-bold text-gray-500">
+                                ${monthsToFund}
+                                </p>
+                                <p class="text-sm text-gray-500">MONTHS TO FUND</p>
+                            </div>
+                        </div>
                     </div>
 
                     <h4 class="font-semibold pt-4 border-t border-gray-200 text-gray-800">Guilt-Free Spending Buckets (Wants) - Target &#8804; 30%</h4>
@@ -312,14 +382,14 @@ function renderBlueprintTab() {
 
                     <div class="mt-4 p-4 bg-white rounded-lg shadow-sm border border-gray-100">
                         <div class="flex justify-between items-center">
-                            <p class="font-semibold text-gray-700">Remaining for Needs (Essentials):</p>
-                            <p id="remainingForNeeds" class="font-bold text-xl ${remainingForPlan < 0 ? 'text-red-600' : 'text-blue-700'}">$${remainingForPlan.toLocaleString()}</p>
+                            <p class="font-semibold text-gray-700">Remaining for Variable Essentials:</p>
+                            <p id="remainingForNeeds" class="font-bold text-xl ${remainingForPlan < 0 ? 'text-red-600' : 'text-blue-500'}">$${remainingForPlan.toLocaleString()}</p>
                         </div>
                         <p class="text-xs text-gray-500">This remaining amount must cover your variable essential spending (groceries, gas, etc.).</p>
                     </div>
                 </div>
 
-                <div class="text-center p-4">
+                <div class="text-center p-4 rounded-lg bg-[#F9FAFB]">
                     <h3 class="font-semibold text-lg mb-4">Your New Plan</h3>
                     <div class="chart-container h-64">
                         <canvas id="planDonutChart"></canvas>
@@ -351,12 +421,12 @@ function renderBlueprintTab() {
         remEl.textContent = `$${currentRemaining.toLocaleString()}`;
 
         if (currentRemaining < 0) {
-            remEl.classList.remove('text-blue-700'); // Remove blue
+            remEl.classList.remove('text-blue-500'); // Remove blue
             remEl.classList.add('text-red-600');     // Add red
         }
         else {
             remEl.classList.remove('text-red-600');  // Remove red
-            remEl.classList.add('text-blue-700');    // Add blue
+            remEl.classList.add('text-blue-500');    // Add blue
         }
 
         renderPlanDonutChart();
@@ -386,7 +456,7 @@ function renderPlanDonutChart() {
     const ctx = document.getElementById('planDonutChart')?.getContext('2d');
     if (!ctx) return;
 
-    const wealthTarget = Math.round(appState.availableCash * 0.2);
+    const wealthTarget = appState.availableCash > 0 ? Math.round(appState.availableCash * 0.2) : 0;
     const totalWants = appState.spendingPlan.debtAcceleration + appState.spendingPlan.guiltFreeBuckets.reduce((sum, b) => sum + b.amount, 0);
     let remainingNeeds = appState.availableCash - wealthTarget - totalWants;
 
@@ -403,7 +473,7 @@ function renderPlanDonutChart() {
 
     dataLabels.push('Needs (Essentials)');
     dataAmounts.push(remainingNeeds);
-    dataColors.push('#1447E6');
+    dataColors.push('#2B7FFF');
 
     if (appState.spendingPlan.debtAcceleration > 0) {
         dataLabels.push('Debt Attack');
@@ -420,6 +490,7 @@ function renderPlanDonutChart() {
         }
     });
 
+    // Prepare and render chart
     const data = {
         labels: dataLabels,
         datasets: [{
@@ -429,30 +500,31 @@ function renderPlanDonutChart() {
             borderWidth: 2,
         }]
     };
-
     const options = {
-        responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { position: 'bottom' }, tooltip: { callbacks: { label: (c) => `${c.label}: $${c.raw.toLocaleString()}` } } }
+        responsive: true, 
+        maintainAspectRatio: false,
+        plugins: { 
+            legend: { position: 'bottom' }, 
+            datalabels: {
+                backgroundColor: 'rgba(0,0,0,0.3)',
+                borderRadius: 20,
+                padding: 6,
+                color: '#FFFFFF',
+                font: { weight: 'bold', size: 15 },
+                formatter: (value, context) => {
+                    const data = context.chart.data.datasets[0].data;
+                    const total = data.reduce((sum, v) => sum + v, 0);
+                    if (value <= 0 || !total) return null; //Check for zero total
+                    return `${((value / total) * 100).toFixed(1)}%`;
+                }
+            },
+            tooltip: { callbacks: { label: (c) => ` $${c.raw.toLocaleString()}` } } }
     };
-
-    initChart(ctx, 'doughnut', data, options);
+    initChart(ctx, 'doughnut', data, options, [ChartDataLabels, emptyStatePlugin]);
 }
 
 // -- TAB 4: AUTOMATE --
 function renderAutomateTab() {
-    // Dynamic values from appState
-    if (!appState.automation) {
-        appState.automation = { debtTransfer: false, wealthTransfer: false };
-    }
-
-    // 2. Dynamic values from appState
-    const debtAmount = (appState.spendingPlan.debtAcceleration || 0).toLocaleString();
-    const wealthAmount = (appState.spendingPlan.wealth || 0).toLocaleString();
-
-    // 3. Determine Checkbox State strings
-    const debtChecked = appState.automation.debtTransfer ? 'checked' : '';
-    const wealthChecked = appState.automation.wealthTransfer ? 'checked' : '';
-
     const content = `
         <div class="animate-fade-in">
             <h2 class="text-2xl font-bold mb-4 text-brand-primary">Module 4: Automation & Boundary Lock-In</h2>
@@ -461,21 +533,28 @@ function renderAutomateTab() {
             </p>
             <div class="grid md:grid-cols-2 gap-8">
                 <div class="p-6 bg-[#F9FAFB] rounded-lg border border-gray-200">
-                    <h3 class="font-semibold text-lg mb-4">The Two-Transfer Automation System</h3>
+                    <h3 class="font-semibold text-lg mb-4">The Three-Transfer Automation System</h3>
                     <p class="text-sm text-gray-600 mb-4">Commit to setting up these two automated transfers to occur the day after your paycheck hits your account.</p>
                     <ul class="space-y-4">
                         <li class="flex items-start">
-                            <input type="checkbox" class="mt-1 text-brand-primary" ${debtChecked} onchange="toggleAutomationCheck('debtTransfer', this.checked)">
+                            <input type="checkbox" class="mt-1 text-brand-primary" ${appState.automation.debtTransfer ? 'checked' : ''} onchange="toggleAutomationCheck('debtTransfer', this.checked)">
                             <label class="ml-3 text-sm">
                                 <span class="font-semibold block text-gray-900">Transfer 1: Debt Acceleration</span>
-                                Transfer <span class="font-bold text-brand-primary">$${debtAmount}</span> to your primary debt target.
+                                Transfer <span class="font-bold text-brand-primary">$${(appState.spendingPlan.debtAcceleration || 0).toLocaleString()}</span> to your primary debt target.
                             </label>
                         </li>
                         <li class="flex items-start">
-                            <input type="checkbox" class="mt-1 text-brand-primary" ${wealthChecked} onchange="toggleAutomationCheck('wealthTransfer', this.checked)">
+                            <input type="checkbox" class="mt-1 text-brand-primary" ${appState.automation.wealthTransfer ? 'checked' : ''} onchange="toggleAutomationCheck('wealthTransfer', this.checked)">
                             <label class="ml-3 text-sm">
                                 <span class="font-semibold block text-gray-900">Transfer 2: Investment/Savings</span>
-                                Transfer <span class="font-bold text-brand-primary">$${wealthAmount}</span> to your brokerage or savings.
+                                Transfer <span class="font-bold text-brand-primary">$${(appState.spendingPlan.wealth || 0).toLocaleString()}</span> to your brokerage or savings.
+                            </label>
+                        </li>
+                        <li class="flex items-start">
+                            <input type="checkbox" class="mt-1 text-brand-primary" ${appState.automation.shortTermTransfer ? 'checked' : ''} onchange="toggleAutomationCheck('shortTermTransfer', this.checked)">
+                            <label class="ml-3 text-sm">
+                                <span class="font-semibold block text-gray-900">Transfer 3: Short-Term Goal</span>
+                                Transfer <span class="font-bold text-brand-primary">$${(appState.totalLeaks || 0).toLocaleString()}</span> to your goal specific savings account.
                             </label>
                         </li>
                     </ul>
@@ -506,11 +585,6 @@ function renderAutomateTab() {
 }
 
 function toggleAutomationCheck(key, isChecked) {
-    // Safety check in case old local storage data loaded without this object
-    if (!appState.automation) {
-        appState.automation = { debtTransfer: false, wealthTransfer: false };
-    }
-
     appState.automation[key] = isChecked;
     saveToLocalStorage();
 }
@@ -550,21 +624,17 @@ function renderNextStepsTab() {
 
 // --- PRINT FUNCTIONALITY ---
 function generateAndPrintSummary() {
-    // 1. Calculate final numbers based on current App State
-    const wealthTarget = appState.spendingPlan.wealth || 0;
-    const debtAccel = appState.spendingPlan.debtAcceleration || 0;
-
     // Sum up guilt-free buckets
     const totalWantsBuckets = appState.spendingPlan.guiltFreeBuckets.reduce((sum, b) => sum + (b.amount || 0), 0);
-    const totalWants = debtAccel + totalWantsBuckets;
+    const totalWants = appState.spendingPlan.debtAcceleration + totalWantsBuckets;
 
     // Calculate Needs
-    const needsAmount = appState.availableCash - wealthTarget - totalWants;
+    const needsAmount = appState.availableCash - (appState.spendingPlan.wealth || 0) - totalWants;
 
-    // 2. Generate Date String
+    // Generate Date String
     const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
-    // 3. Build HTML Template
+    // Build HTML Template
     const printHTML = `
         <div class="print-header">
             <h1 style="color: #530D6C; font-size: 24px; font-weight: bold; margin-bottom: 5px;">High-Income Cash Flow Accelerator</h1>
@@ -583,7 +653,7 @@ function generateAndPrintSummary() {
                         <td>Fixed Expenses:</td>
                         <td style="text-align:right; color: #666;">- $${(appState.fixedExpenses || 0).toLocaleString()}</td>
                     </tr>
-                    <tr style="background-color: #f9f9f9;">
+                    <tr style="background-color: #ffffff;">
                         <td style="padding: 10px 0;"><strong>True Available Cash:</strong></td>
                         <td style="text-align:right; font-weight:bold; color: #530D6C;">$${(appState.availableCash || 0).toLocaleString()}</td>
                     </tr>
@@ -619,10 +689,10 @@ function generateAndPrintSummary() {
                 <tbody>
                     <tr>
                         <td style="padding: 8px; color: #530D6C; font-weight: bold;">Wealth (Future You)</td>
-                        <td style="padding: 8px; text-align: right; font-weight: bold;">$${wealthTarget.toLocaleString()}</td>
+                        <td style="padding: 8px; text-align: right; font-weight: bold;">$${(appState.spendingPlan.wealth || 0).toLocaleString()}</td>
                     </tr>
                     <tr>
-                        <td style="padding: 8px; color: #1447E6; font-weight: bold;">Needs (Essentials)</td>
+                        <td style="padding: 8px; color: #2B7FFF; font-weight: bold;">Needs (Essentials)</td>
                         <td style="padding: 8px; text-align: right; font-weight: bold;">$${needsAmount.toLocaleString()}</td>
                     </tr>
                     <tr>
@@ -631,7 +701,7 @@ function generateAndPrintSummary() {
                     </tr>
                     <tr>
                         <td style="padding: 4px 8px 4px 20px; font-size: 12px;">↳ Debt Acceleration</td>
-                        <td style="padding: 4px 8px; text-align: right; font-size: 12px;">$${debtAccel.toLocaleString()}</td>
+                        <td style="padding: 4px 8px; text-align: right; font-size: 12px;">$${appState.spendingPlan.debtAcceleration.toLocaleString()}</td>
                     </tr>
                     ${appState.spendingPlan.guiltFreeBuckets.filter(b => b.name).map(b => `
                     <tr>
@@ -648,11 +718,15 @@ function generateAndPrintSummary() {
             <ul style="list-style: none;">
                 <li style="margin-bottom: 8px;">
                     <span style="font-size: 18px;">${appState.automation.debtTransfer ? '☑' : '☐'}</span> 
-                    <strong>Debt Transfer:</strong> Auto-transfer $${debtAccel.toLocaleString()} day after payday.
+                    <strong>Debt Transfer:</strong> Auto-transfer $${appState.spendingPlan.debtAcceleration.toLocaleString()} day after payday.
                 </li>
                 <li style="margin-bottom: 8px;">
                     <span style="font-size: 18px;">${appState.automation.wealthTransfer ? '☑' : '☐'}</span> 
-                    <strong>Wealth Transfer:</strong> Auto-transfer $${wealthTarget.toLocaleString()} day after payday.
+                    <strong>Wealth Transfer:</strong> Auto-transfer $${(appState.spendingPlan.wealth || 0).toLocaleString()} day after payday.
+                </li>
+                <li style="margin-bottom: 8px;">
+                    <span style="font-size: 18px;">${appState.automation.shortTermTransfer ? '☑' : '☐'}</span> 
+                    <strong>Short-Term Goal Transfer:</strong> Auto-transfer $${appState.totalLeaks.toLocaleString()} monthly.
                 </li>
             </ul>
         </div>
@@ -698,7 +772,7 @@ function navigate(tabName) {
     if (tabName === 'next') renderNextStepsTab();
 }
 
-// --- 7. INITIALIZATION ---
+// --- INITIALIZATION ---
 // Add Click Listeners to Buttons
 document.querySelectorAll('.tab-button').forEach(button => {
     button.addEventListener('click', (e) => {
@@ -708,4 +782,4 @@ document.querySelectorAll('.tab-button').forEach(button => {
 
 // Start App
 loadFromLocalStorage();
-navigate('mindset'); // Default to Blueprint tab on load
+navigate('blueprint');
