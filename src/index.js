@@ -330,13 +330,13 @@ function renderBlueprintTab() {
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Wealth (Future You) - Target 20%</label>
+                        <p class="block text-sm font-medium text-gray-700">Wealth (Future You) - Target 20%</p>
                         <p class="text-lg font-semibold text-brand-primary">$${wealthTarget.toLocaleString()}</p>
                         <p class="text-sm text-gray-400">This is the amount you'll allocate to your future self. It's a commitment to your wealth-building journey.</p>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Aggressive Debt Attack ($) (Extra Principal)</label>
+                        <p class="block text-sm font-medium text-gray-700">Aggressive Debt Attack ($) (Extra Principal)</p>
                         <input type="number" id="debtAcceleration" class="w-full mt-1 border p-2 rounded" value="${appState.spendingPlan.debtAcceleration || ''}">
                         <p class="text-sm text-gray-400">This is additional money on top of your wealth target and fixed.</p>
                     </div>
@@ -564,22 +564,22 @@ function renderAutomateTab() {
                     <p class="text-sm text-gray-600 mb-4">Commit to setting up these two automated transfers to occur the day after your paycheck hits your account.</p>
                     <ul class="space-y-4">
                         <li class="flex items-start">
-                            <input type="checkbox" class="mt-1 text-brand-primary" ${appState.automation.debtTransfer ? 'checked' : ''} onchange="toggleAutomationCheck('debtTransfer', this.checked)">
-                            <label class="ml-3 text-sm">
+                            <input id="debtTransfer" type="checkbox" class="mt-1 text-brand-primary" ${appState.automation.debtTransfer ? 'checked' : ''} onchange="toggleAutomationCheck('debtTransfer', this.checked)">
+                            <label for="debtTransfer" class="ml-3 text-sm">
                                 <span class="font-semibold block text-gray-900">Transfer 1: Debt Acceleration</span>
                                 Transfer <span class="font-bold text-brand-primary">$${(appState.spendingPlan.debtAcceleration || 0).toLocaleString()}</span> to your primary debt target.
                             </label>
                         </li>
                         <li class="flex items-start">
-                            <input type="checkbox" class="mt-1 text-brand-primary" ${appState.automation.wealthTransfer ? 'checked' : ''} onchange="toggleAutomationCheck('wealthTransfer', this.checked)">
-                            <label class="ml-3 text-sm">
+                            <input id="wealthTransfer" type="checkbox" class="mt-1 text-brand-primary" ${appState.automation.wealthTransfer ? 'checked' : ''} onchange="toggleAutomationCheck('wealthTransfer', this.checked)">
+                            <label for="wealthTransfer" class="ml-3 text-sm">
                                 <span class="font-semibold block text-gray-900">Transfer 2: Investment/Savings</span>
                                 Transfer <span class="font-bold text-brand-primary">$${(appState.spendingPlan.wealth || 0).toLocaleString()}</span> to your brokerage or savings.
                             </label>
                         </li>
                         <li class="flex items-start">
-                            <input type="checkbox" class="mt-1 text-brand-primary" ${appState.automation.shortTermTransfer ? 'checked' : ''} onchange="toggleAutomationCheck('shortTermTransfer', this.checked)">
-                            <label class="ml-3 text-sm">
+                            <input id="shortTermTransfer" type="checkbox" class="mt-1 text-brand-primary" ${appState.automation.shortTermTransfer ? 'checked' : ''} onchange="toggleAutomationCheck('shortTermTransfer', this.checked)">
+                            <label for="shortTermTransfer" class="ml-3 text-sm">
                                 <span class="font-semibold block text-gray-900">Transfer 3: Short-Term Goal</span>
                                 Transfer <span class="font-bold text-brand-primary">$${(appState.totalLeaks || 0).toLocaleString()}</span> to your goal specific savings account.
                             </label>
@@ -693,7 +693,7 @@ function generateAndPrintSummary() {
                         <td>Fixed Expenses:</td>
                         <td style="text-align:right; color: #666;">- $${(appState.fixedExpenses || 0).toLocaleString()}</td>
                     </tr>
-                    <tr style="background-color: #ffffff;">
+                    <tr>
                         <td style="padding: 10px 0;"><strong>True Available Cash:</strong></td>
                         <td style="text-align:right; font-weight:bold; color: #530D6C;">$${(appState.availableCash || 0).toLocaleString()}</td>
                     </tr>
@@ -721,7 +721,7 @@ function generateAndPrintSummary() {
             
             <table class="print-table" style="font-size: 14px;">
                 <thead>
-                    <tr style="background-color: #f0f0f0;">
+                    <tr>
                         <th style="padding: 8px;">Category</th>
                         <th style="padding: 8px; text-align: right;">Allocation</th>
                     </tr>
