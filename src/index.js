@@ -677,7 +677,7 @@ function generateAndPrintSummary() {
     // Build HTML Template
     const printHTML = `
         <div class="print-header">
-            <h1 style="color: #530D6C; font-size: 24px; font-weight: bold; margin-bottom: 5px;">High-Income Cash Flow Accelerator</h1>
+            <h1 style="color: #530D6C; font-size: 24px; font-weight: bold; margin-bottom: 5px;">The Six Figure Spending Plan</h1>
             <p style="color: #666; font-size: 14px;">Workshop Summary • Generated on ${today}</p>
         </div>
 
@@ -707,7 +707,7 @@ function generateAndPrintSummary() {
                 <p><strong>By:</strong> ${appState.shortTermGoal.targetDate || 'No date set'}</p>
 
                 <div style="margin-top: 15px;">
-                    <p style="font-size: 12px; font-weight: bold; color: #666;">IDENTIFIED CASH LEAKS:</p>
+                    <p style="font-size: 12px; font-weight: bold; color: #666;">IDENTIFIED CASH LEAKS: $${appState.totalLeaks || 0}</p>
                     <ul style="font-size: 12px; margin-left: 15px;">
                         ${appState.cashLeaks.filter(l => l.category).map(l => `<li>${l.category}: $${l.amount}</li>`).join('') || '<li>No leaks recorded</li>'}
                     </ul>
@@ -772,7 +772,7 @@ function generateAndPrintSummary() {
         </div>
 
         <div style="margin-top: 40px; text-align: center; color: #666; font-size: 12px;">
-            <p>Created with The High-Income Cash Flow Accelerator</p>
+            <p>The Six Figure Spending Plan Workshop</p>
             <p>www.reframedfinancialcoaching.com</p>
         </div>
     `;
