@@ -1,8 +1,8 @@
-const DEV_MODE = false;
+// const DEV_MODE = false;
 
-if (DEV_MODE) {
-    localStorage.removeItem('appState');
-}
+// if (DEV_MODE) {
+//     localStorage.removeItem('appState');
+// }
 
 // --- 1. STATIC DATA (Content Arrays) ---
 const journalPrompts = [
