@@ -626,6 +626,7 @@ body {
   font-family: 'Inter', sans-serif;
   background-color: var(--bg-page);
   color: var(--text-main);
+  padding-bottom: env(safe-area-inset-bottom, 20px);
 }
 .tab-active {
   border-bottom: 3px solid var(--brand-primary);
