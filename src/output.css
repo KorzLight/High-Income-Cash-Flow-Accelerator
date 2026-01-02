@@ -8,14 +8,7 @@
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
       "Courier New", monospace;
     --color-red-600: oklch(57.7% 0.245 27.325);
-    --color-red-900: oklch(39.6% 0.141 25.723);
-    --color-orange-600: oklch(64.6% 0.222 41.116);
-    --color-orange-700: oklch(55.3% 0.195 38.402);
-    --color-orange-800: oklch(47% 0.157 37.304);
-    --color-amber-100: oklch(96.2% 0.059 95.617);
-    --color-amber-600: oklch(66.6% 0.179 58.318);
     --color-amber-700: oklch(55.5% 0.163 48.998);
-    --color-amber-800: oklch(47.3% 0.137 46.201);
     --color-green-700: oklch(52.7% 0.154 150.069);
     --color-blue-500: oklch(62.3% 0.214 259.815);
     --color-gray-50: oklch(98.5% 0.002 247.839);
@@ -47,14 +40,10 @@
     --text-3xl--line-height: calc(2.25 / 1.875);
     --text-4xl: 2.25rem;
     --text-4xl--line-height: calc(2.5 / 2.25);
-    --font-weight-thin: 100;
     --font-weight-medium: 500;
     --font-weight-semibold: 600;
     --font-weight-bold: 700;
-    --font-weight-extrabold: 800;
-    --font-weight-black: 900;
     --radius-lg: 0.5rem;
-    --drop-shadow-sm: 0 1px 2px rgb(0 0 0 / 0.15);
     --default-transition-duration: 150ms;
     --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     --default-font-family: var(--font-sans);
@@ -703,6 +692,20 @@ input:focus, select:focus {
   .chart-container {
     height: 350px;
     max-height: 400px;
+  }
+}
+@media (max-width: 768px) {
+  input[type="text"], input[type="number"], input[type="date"] {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 45px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
   }
 }
 .prompt-card {

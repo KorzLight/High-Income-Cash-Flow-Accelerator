@@ -99,6 +99,30 @@ select:focus {
     }
 }
 
+@media (max-width: 768px) {
+
+    input[type="text"],
+    input[type="number"],
+    input[type="date"] {
+        -webkit-appearance: none;
+        /* Fixes iOS 'bubble' styling */
+        appearance: none;
+        height: 45px;
+        /* Forces all boxes to be the same height */
+        font-size: 16px;
+        /* Prevents iOS auto-zoom */
+        border: 1px solid #ccc;
+        /* Ensure borders match */
+        border-radius: 8px;
+        /* Ensure corners match */
+        padding: 10px;
+        /* Consistent internal spacing */
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+    }
+}
+
 .prompt-card {
     background-color: #f9fafb;
     border: 1px solid var(--border-color);
