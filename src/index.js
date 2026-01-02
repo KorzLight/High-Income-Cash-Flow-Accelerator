@@ -66,7 +66,6 @@ function loadFromLocalStorage() {
     }
 }
 
-
 // Chart Instances
 const charts = {};
 
@@ -132,7 +131,7 @@ function renderMindsetTab() {
                         `).join('')}
                     </div>
                 </div>
-                <div class="text-center p-4 rounded-lg bg-[#F9FAFB]">
+                <div class="text-center p-4 rounded-lg bg-[#F9FAFB] shadow-sm border border-gray-200">
                     <h3 class="font-semibold text-lg mb-4">The Power 3 Allocation Concept</h3>
                     <p class="text-sm text-gray-500 mb-4">We will build a plan based on this powerful framework: assigning a portion of your income first to wealth, then needs, then wants.</p>
                     <div class="chart-container h-64">
@@ -207,7 +206,7 @@ function renderAuditTab() {
                     <div id="availableCashResult" class="text-center font-bold text-2xl text-brand-primary h-8">Available Cash: $${appState.availableCash.toLocaleString()}</div>
                 </div>
                 <!--Step 2-->
-                <div class="space-y-4 p-6 bg-[#F9FAFB] rounded-lg border border-gray-200">
+                <div class="space-y-4 p-6 bg-[#F9FAFB] rounded-lg border border-gray-200 shadow-sm">
                     <h3 class="font-semibold text-lg mb-2 text-gray-800">Step 2: Map Your Top 3 Cash Leaks</h3>
                     <p class="text-sm text-gray-600">
                         Enter your top 3 variable spending categories from the last month.
@@ -218,7 +217,7 @@ function renderAuditTab() {
                             <input type="number" data-leak-amount="${index}" class="w-full text-sm border p-2 rounded" placeholder="Amount ($)" value="${leak.amount || ''}">
                         </div>
                     `).join('')}
-                    <div id="totalCashLeaks" class="text-center font-bold text-2xl text-red-900 h-8">Total Cash Leaks: $${appState.totalLeaks.toLocaleString()}</div>
+                    <div id="totalCashLeaks" class="text-center font-bold text-2xl text-amber-700 h-8">Total Cash Leaks: $${appState.totalLeaks.toLocaleString()}</div>
                 </div>
             </div>
             <!--Step 3-->
@@ -347,23 +346,23 @@ function renderBlueprintTab() {
                         <div class="grid md:grid-cols-2 gap-2">
                             <div>
                                 <label for="shortTermGoalName" class="block text-sm font-medium text-gray-700">Goal Title</label>        
-                                <input id="shortTermGoalName" type="text" class="w-full mt-1" value="${appState.shortTermGoal.title || ''}" disabled>
+                                <input id="shortTermGoalName" type="text" class="w-full mt-1" value="${appState.shortTermGoal.title || ''}">
                             </div>
                             <div>
                                 <label for="shortTermGoalAmount" class="block text-sm font-medium text-gray-700">Target ($)</label>
-                                <input id="shortTermGoalAmount" type="number" class="w-full mt-1" value="${appState.shortTermGoal.amount || ''}" disabled>
+                                <input id="shortTermGoalAmount" type="number" class="w-full mt-1" value="${appState.shortTermGoal.amount || ''}">
                             </div>
                         </div>
 
                         <div class="grid grid-cols-2 mt-4 p-4 bg-white rounded-lg shadow-sm border border-gray-100">
                             <div class="flex justify-between items-center">
-                                <p class="font-semibold text-lg text-gray-700">Monthly Fuel Identified: $${appState.totalLeaks || "0"}</p>
+                                <p class="font-semibold text-lg text-gray-700">Monthly Leak Reallocation: <span id="monthlyLeakReallocation" class="text-amber-700">$${appState.totalLeaks || "0"}</span></p>
                             </div>
                             <div class="justify-self-end text-center">
-                                <p class="text-3xl font-bold text-gray-500">
+                                <p id="monthsToFund" class="text-3xl font-bold text-amber-700">
                                 ${monthsToFund}
                                 </p>
-                                <p class="text-sm text-gray-500">MONTHS TO FUND</p>
+                                <p class="text-sm text-amber-700">MONTHS TO FUND</p>
                             </div>
                         </div>
                     </div>
@@ -389,7 +388,7 @@ function renderBlueprintTab() {
                     </div>
                 </div>
 
-                <div class="text-center p-4 rounded-lg bg-[#F9FAFB]">
+                <div class="text-center p-4 border border-gray-200 rounded-lg bg-[#F9FAFB] shadow-sm">
                     <h3 class="font-semibold text-lg mb-4">Your New Plan</h3>
                     <div class="chart-container h-64">
                         <canvas id="planDonutChart"></canvas>
@@ -428,14 +427,31 @@ function renderBlueprintTab() {
             remEl.classList.remove('text-red-600');  // Remove red
             remEl.classList.add('text-blue-500');    // Add blue
         }
-
+        updateGoalAcceleration();
         renderPlanDonutChart();
         saveToLocalStorage();
     };
 
-    document.getElementById('debtAcceleration').addEventListener('input', handleInput);
-    document.getElementById('guiltFreeBucketsContainer').addEventListener('input', handleInput); // Event delegation
+    const updateGoalAcceleration = () => {
+        const monthlyLeaks = appState.totalLeaks || 0;
+      
+        const months =
+          monthlyLeaks === 0
+            ? 0
+            : Math.ceil(
+                (appState.shortTermGoal.amount || 0) / monthlyLeaks
+              );
+      
+        document.getElementById('monthlyLeakReallocation').textContent =
+          `$${monthlyLeaks.toLocaleString()}`;
+      
+        document.getElementById('monthsToFund').textContent = months;
+      };
+      
 
+    document.getElementById('debtAcceleration').addEventListener('input', handleInput);
+    document.getElementById('guiltFreeBucketsContainer').addEventListener('input', handleInput);
+    
     // Add Bucket Button
     document.getElementById('addBucket').addEventListener('click', () => {
         appState.spendingPlan.guiltFreeBuckets.push({ name: '', amount: 0 });
@@ -450,6 +466,17 @@ function renderBlueprintTab() {
             renderBlueprintTab(); // Re-render to show updated rows
         }
     });
+
+    document.getElementById('shortTermGoalName').addEventListener('input', e => { 
+        appState.shortTermGoal.title = e.target.value; 
+        saveToLocalStorage();
+     });
+    document.getElementById('shortTermGoalAmount').addEventListener('input', e => { 
+        appState.shortTermGoal.amount = parseFloat(e.target.value) || 0; 
+        updateGoalAcceleration();
+        saveToLocalStorage();
+     });
+
 }
 
 function renderPlanDonutChart() {
@@ -532,7 +559,7 @@ function renderAutomateTab() {
                 A plan is only as good as its execution. Here, we lock in your new habits through automation and prepare you to protect your financial boundaries.
             </p>
             <div class="grid md:grid-cols-2 gap-8">
-                <div class="p-6 bg-[#F9FAFB] rounded-lg border border-gray-200">
+                <div class="p-6 bg-[#F9FAFB] rounded-lg border border-gray-200 shadow-sm">
                     <h3 class="font-semibold text-lg mb-4">The Three-Transfer Automation System</h3>
                     <p class="text-sm text-gray-600 mb-4">Commit to setting up these two automated transfers to occur the day after your paycheck hits your account.</p>
                     <ul class="space-y-4">
@@ -559,7 +586,7 @@ function renderAutomateTab() {
                         </li>
                     </ul>
                 </div>
-                <div class="p-6 bg-[#F9FAFB] rounded-lg border border-gray-200">
+                <div class="p-6 bg-[#F9FAFB] rounded-lg border border-gray-200 shadow-sm">
                     <h3 class="font-semibold text-lg mb-4">The Boundary Protocol</h3>
                     <p class="text-sm text-gray-600 mb-4">High-earners protect their money with clear boundaries.
                         Here are scripts to practice.
@@ -592,28 +619,41 @@ function toggleAutomationCheck(key, isChecked) {
 // -- TAB 5: NEXT STEPS --
 function renderNextStepsTab() {
     const content = `
-        <div class="animate-fade-in text-center max-w-2xl mx-auto">
-            <h2 class="text-2xl font-bold mb-4 text-brand-primary">Closing & Next Steps</h2>
-            <p class="mb-6 text-gray-600">You now have the map: Your implementable spending plan. You can print a summary of your work below to keep it on your desk or fridge.</p>
+        <div class="animate-fade-in">
+            <div class="rounded-lg bg-[#F9FAFB] px-6 pb-10 pt-6 mb-4 border-gray-300 border-2 shadow-sm">
+                <p class="text-base font-semibold text-[hsla(43,100%,45%,1)] mb-2 ">SAVE THE DATE</p>
+                <h2 class="text-2xl font-bold mb-4 text-brand-primary">Arise & Align Conference 2026</h2>
+                <p class="mb-6 text-gray-600">Reclaiming your health. Reframing your wealth. Restoring your wholeness. Join us for a full day of unmasking burnout and building holistic wealth.</p>   
+                <a href="https://link.reframedfinancialcoaching.com/payment-link/693da086902dfc4e43068b91" target="_blank" class="btn-primary w-full sm:w-auto py-3 px-15 rounded-lg font-semibold text-center">
+                Register Now!
+                </a>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-4 items-stretch">
+                <div class="flex-1 flex flex-col px-8 pt-8 pb-12 bg-[#F9FAFB] rounded-lg border border-gray-200 shadow-sm">
+                    <h3 class="font-semibold text-xl mb-4">Strategy Session</h3>
+                    <p class="mb-4 text-gray-600">A 30-minute deep dive into your personalized spending plan and mindset hurdles.</p>
+                    <a href="https://calendly.com/prea-epps/30min-strategy-session" target="_blank" class="mt-auto underline underline-offset-4 font-bold text-[var(--brand-primary)] hover:text-[var(--brand-hover)] transition-colors">
+                        Book My Session &rarr;
+                    </a> 
+                </div>
+                
+                <div class="flex-1 flex flex-col px-8 pt-8 pb-12 bg-[#F9FAFB] rounded-lg border border-gray-200 shadow-sm">
+                    <h3 class="font-semibold text-xl mb-4">Freedom Through Finance</h3>
+                    <p class="mb-4 text-gray-600">Define your biggest goals and get a professional recommendation on your next steps.</p>
+                    <a href="https://calendly.com/prea-epps/freedom-through-finance" target="_blank" class="mt-auto underline underline-offset-4 font-bold text-[var(--brand-primary)] hover:text-[var(--brand-hover)] transition-colors">
+                        Schedule Call &rarr;
+                    </a> 
+                </div>
+            </div>
+
             
-            <button id="printSummaryBtn" class="mb-8 flex items-center justify-center mx-auto text-brand-primary border border-brand-primary hover:bg-gray-50 font-medium rounded-lg text-sm px-5 py-2.5 transition-colors">
+            <button id="printSummaryBtn" class="flex items-center justify-center mt-6 px-12  mx-auto text-brand-primary border border-brand-primary hover:bg-gray-50 font-medium rounded-lg text-sm px-5 py-2.5 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0 0 21 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 0 0-1.913-.247M6.34 18H5.25A2.25 2.25 0 0 1 3 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 0 1 1.913-.247m10.5 0a48.536 48.536 0 0 0-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5Zm-3 0h.008v.008H15V10.5Z" />
                 </svg>
                 Print Workshop Summary
             </button>
-
-            <p class="mb-6 text-gray-600">While this workshop provides the strategy, one-on-one coaching tailors it to your unique income, debt reality, and long-term goals.</p>
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="mailto:prea.epps@reframedfinancialcoaching.com?subject=Discovery%20Call%20Request&body=Hi,%20I%20would%20like%20to%20schedule%20a%20private%20discovery%20call." 
-                    class="btn-primary w-full sm:w-auto py-3 px-6 rounded-lg font-semibold text-center">
-                        Book Your Private Discovery Call
-                    </a>
-                    <a href="https://www.reframedfinancialcoaching.com/" target="_blank" class="btn-secondary w-full sm:w-auto py-3 px-6 rounded-lg font-semibold text-center">
-                        Join the Financial Freedom Collective
-                    </a>
-                </div>
-            </div>
         </div>
     `;
     document.getElementById('main-content-area').innerHTML = content;
@@ -782,4 +822,4 @@ document.querySelectorAll('.tab-button').forEach(button => {
 
 // Start App
 loadFromLocalStorage();
-navigate('blueprint');
+navigate('mindset');
