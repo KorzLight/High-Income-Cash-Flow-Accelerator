@@ -613,14 +613,14 @@
   }
 }
 :root {
-  --brand-primary: #530D6C;
-  --brand-hover: #3E0A51;
-  --brand-accent: #FCB80B;
-  --text-main: #1C1C1C;
+  --brand-primary: #530d6c;
+  --brand-hover: #3e0a51;
+  --brand-accent: #fcb80b;
+  --text-main: #1c1c1c;
   --text-muted: #666666;
-  --bg-page: #F0F0F0;
-  --bg-card: #FFFFFF;
-  --border-color: #BBBBBB;
+  --bg-page: #f0f0f0;
+  --bg-card: #ffffff;
+  --border-color: #bbbbbb;
 }
 body {
   font-family: 'Inter', sans-serif;
@@ -641,7 +641,7 @@ body {
   color: var(--brand-primary);
 }
 .tab-locked {
-  color: #D1D5DB;
+  color: #d1d5db;
   cursor: not-allowed;
 }
 .main-content {
@@ -665,7 +665,7 @@ body {
   transition: all 0.3s ease;
 }
 .btn-secondary:hover {
-  background-color: #F3F4F6;
+  background-color: #f3f4f6;
   border-color: var(--brand-primary);
 }
 input, select {
@@ -696,7 +696,7 @@ input:focus, select:focus {
   }
 }
 @media (max-width: 768px) {
-  input[type="text"], input[type="number"], input[type="date"] {
+  input[type='text'], input[type='number'], input[type='date'] {
     -webkit-appearance: none;
     appearance: none;
     height: 45px;
@@ -752,11 +752,11 @@ input:focus, select:focus {
     height: 100%;
     background-color: white;
     font-family: 'Inter', sans-serif;
-    color: #1C1C1C;
+    color: #1c1c1c;
     z-index: 9999;
   }
   .print-header {
-    border-bottom: 2px solid #530D6C;
+    border-bottom: 2px solid #530d6c;
     padding-bottom: 20px;
     margin-bottom: 30px;
   }
@@ -776,7 +776,7 @@ input:focus, select:focus {
   }
   .print-table th {
     text-align: left;
-    border-bottom: 1px solid #BBBBBB;
+    border-bottom: 1px solid #bbbbbb;
     padding: 5px 0;
   }
   .print-table td {

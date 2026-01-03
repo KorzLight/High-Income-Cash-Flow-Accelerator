@@ -1,19 +1,28 @@
-// const DEV_MODE = false;
-
-// if (DEV_MODE) {
-//     localStorage.removeItem('appState');
-// }
-
 // --- 1. STATIC DATA (Content Arrays) ---
 const journalPrompts = [
-    { q: "The Emotional Trigger", a: "What is the one emotion (stress, guilt, exhaustion) that drives your impulse spending?" },
-    { q: "Values Alignment", a: "Are my financial choices aligning with my core values? What would I sacrifice in my current spending to achieve my bigger financial goals?" },
-    { q: "The Money Script", a: "How were you raised to think about money? What are some of your fears/concerns related to it?" }
+    {
+        q: 'The Emotional Trigger',
+        a: 'What is the one emotion (stress, guilt, exhaustion) that drives your impulse spending?',
+    },
+    {
+        q: 'Values Alignment',
+        a: 'Are my financial choices aligning with my core values? What would I sacrifice in my current spending to achieve my bigger financial goals?',
+    },
+    {
+        q: 'The Money Script',
+        a: 'How were you raised to think about money? What are some of your fears/concerns related to it?',
+    },
 ];
 
 const boundaryProtocols = [
-    { q: "Friend asks for money", a: "I care about you, but I made a commitment that all my savings this month are dedicated to my down payment fund. I can't access that money right now." },
-    { q: "Family pressure for trip", a: "That sounds amazing, but I'm in a focused financial quarter right now to fund my investment goals. I'll join the next trip when it aligns with my plan." }
+    {
+        q: 'Friend asks for money',
+        a: "I care about you, but I made a commitment that all my savings this month are dedicated to my down payment fund. I can't access that money right now.",
+    },
+    {
+        q: 'Family pressure for trip',
+        a: "That sounds amazing, but I'm in a focused financial quarter right now to fund my investment goals. I'll join the next trip when it aligns with my plan.",
+    },
 ];
 
 //Brand Colors js
@@ -30,12 +39,12 @@ let appState = {
     cashLeaks: [
         { category: '', amount: 0 },
         { category: '', amount: 0 },
-        { category: '', amount: 0 }
+        { category: '', amount: 0 },
     ],
     shortTermGoal: {
         title: '',
         amount: 0,
-        targetDate: ''
+        targetDate: '',
     },
     spendingPlan: {
         wealth: 0,
@@ -43,14 +52,14 @@ let appState = {
         guiltFreeBuckets: [
             { name: '', amount: 0 },
             { name: '', amount: 0 },
-            { name: '', amount: 0 }
-        ]
+            { name: '', amount: 0 },
+        ],
     },
     automation: {
         debtTransfer: false,
         wealthTransfer: false,
-        shortTermTransfer: false
-    }
+        shortTermTransfer: false,
+    },
 };
 
 // Local Storage Persistence
@@ -78,7 +87,7 @@ function initChart(ctx, type, data, options, plugins = []) {
         type,
         data,
         options,
-        plugins
+        plugins,
     });
 }
 
@@ -89,7 +98,7 @@ const emptyStatePlugin = {
         const hasData =
             dataset &&
             Array.isArray(dataset.data) &&
-            dataset.data.some(v => v > 0);
+            dataset.data.some((v) => v > 0);
 
         if (!hasData) {
             const { ctx, width, height } = chart;
@@ -103,7 +112,7 @@ const emptyStatePlugin = {
             ctx.fillText('Waiting for data…', width / 2, height / 2);
             ctx.restore();
         }
-    }
+    },
 };
 
 // Render Functions
@@ -118,7 +127,9 @@ function renderMindsetTab() {
                 <div>
                     <h3 class="font-semibold text-lg mb-4">Journal Prompts for Clarity</h3>
                     <div id="journal-prompts-container" class="space-y-4">
-                        ${journalPrompts.map(p => `
+                        ${journalPrompts
+                            .map(
+                                (p) => `
                             <div class="prompt-card" onclick="this.classList.toggle('open')">
                                 <div class="flex justify-between items-center">
                                     <h4 class="font-semibold">${p.q}</h4>
@@ -128,7 +139,9 @@ function renderMindsetTab() {
                                     <p class="text-sm text-gray-600">${p.a}</p>
                                 </div>
                             </div>
-                        `).join('')}
+                        `
+                            )
+                            .join('')}
                     </div>
                 </div>
                 <div class="text-center p-4 rounded-lg bg-[#F9FAFB] shadow-sm border border-gray-200">
@@ -150,18 +163,24 @@ function renderConceptDonutChart() {
     const ctx = document.getElementById('conceptDonutChart')?.getContext('2d');
     if (!ctx) return;
     const data = {
-        labels: ['Wealth (Future You)', 'Needs (Essentials)', 'Wants (Today\'s Joy)'],
-        datasets: [{
-            data: [20, 50, 30],
-            backgroundColor: [COLOR_PRIMARY, COLOR_NEUTRAL, COLOR_ACCENT],
-            borderColor: '#FFFFFF',
-            borderWidth: 2,
-        }]
+        labels: [
+            'Wealth (Future You)',
+            'Needs (Essentials)',
+            "Wants (Today's Joy)",
+        ],
+        datasets: [
+            {
+                data: [20, 50, 30],
+                backgroundColor: [COLOR_PRIMARY, COLOR_NEUTRAL, COLOR_ACCENT],
+                borderColor: '#FFFFFF',
+                borderWidth: 2,
+            },
+        ],
     };
     const options = {
-        responsive: true, 
+        responsive: true,
         maintainAspectRatio: false,
-        plugins: { 
+        plugins: {
             legend: { position: 'bottom' },
             datalabels: {
                 backgroundColor: 'rgba(0,0,0,0.3)',
@@ -169,16 +188,16 @@ function renderConceptDonutChart() {
                 padding: 6,
                 color: '#FFFFFF',
                 font: { weight: 'bold', size: 15 },
-                formatter: (value) => value + '%'
+                formatter: (value) => value + '%',
             },
             tooltip: {
                 callbacks: {
                     label: (context) => {
                         return ` ${context.raw}%`;
-                    }
-                }
-            }
-        }
+                    },
+                },
+            },
+        },
     };
     initChart(ctx, 'doughnut', data, options, [ChartDataLabels]);
 }
@@ -197,11 +216,15 @@ function renderAuditTab() {
                     <h3 class="font-semibold text-lg mb-2 text-gray-800">Step 1: Calculate Your Available Cash</h3>
                     <div>
                         <label for="netPay" class="block text-sm font-medium text-gray-700">Net Monthly Paycheck ($)</label>
-                        <input type="number" id="netPay" class="w-full mt-1" placeholder="e.g., 8000" value="${appState.netMonthlyPaycheck || ''}">
+                        <input type="number" id="netPay" class="w-full mt-1" placeholder="e.g., 8000" value="${
+                            appState.netMonthlyPaycheck || ''
+                        }">
                     </div>
                     <div>
                         <label for="fixedExpenses" class="block text-sm font-medium text-gray-700">Total Fixed Expenses ($)</label>
-                        <input type="number" id="fixedExpenses" class="w-full mt-1" placeholder="Rent, min debt payments, etc." value="${appState.fixedExpenses || ''}">
+                        <input type="number" id="fixedExpenses" class="w-full mt-1" placeholder="Rent, min debt payments, etc." value="${
+                            appState.fixedExpenses || ''
+                        }">
                     </div>
                     <div id="availableCashResult" class="text-center font-bold text-2xl text-brand-primary h-8">Available Cash: $${appState.availableCash.toLocaleString()}</div>
                 </div>
@@ -211,12 +234,20 @@ function renderAuditTab() {
                     <p class="text-sm text-gray-600">
                         Enter your top 3 variable spending categories from the last month.
                     </p>
-                    ${appState.cashLeaks.map((leak, index) => `
+                    ${appState.cashLeaks
+                        .map(
+                            (leak, index) => `
                         <div class="grid grid-cols-2 gap-2">
-                            <input type="text" data-leak-category="${index}" class="w-full text-sm border p-2 rounded" placeholder="Category" value="${leak.category || ''}">
-                            <input type="number" data-leak-amount="${index}" class="w-full text-sm border p-2 rounded" placeholder="Amount ($)" value="${leak.amount || ''}">
+                            <input type="text" data-leak-category="${index}" class="w-full text-sm border p-2 rounded" placeholder="Category" value="${
+                                leak.category || ''
+                            }">
+                            <input type="number" data-leak-amount="${index}" class="w-full text-sm border p-2 rounded" placeholder="Amount ($)" value="${
+                                leak.amount || ''
+                            }">
                         </div>
-                    `).join('')}
+                    `
+                        )
+                        .join('')}
                     <div id="totalCashLeaks" class="text-center font-bold text-2xl text-amber-700 h-8">Total Cash Leaks: $${appState.totalLeaks.toLocaleString()}</div>
                 </div>
             </div>
@@ -240,7 +271,9 @@ function renderAuditTab() {
                     </div>
                     <div>
                         <label for="goalDate" class="block text-sm font-medium text-gray-700">Target Completion Date</label>
-                        <input type="date" id="goalDate" class="w-full mt-1" value="${appState.shortTermGoal.targetDate || ''}">
+                        <input type="date" id="goalDate" class="w-full mt-1" value="${
+                            appState.shortTermGoal.targetDate || ''
+                        }">
                     </div>
                 </div>
             </div>
@@ -251,15 +284,23 @@ function renderAuditTab() {
     // -- Event Listeners for Audit --
     // Helper to update state and save
     const updateCalculations = () => {
-        appState.availableCash = appState.netMonthlyPaycheck - appState.fixedExpenses;
-        document.getElementById('availableCashResult').textContent = `Available Cash: $${appState.availableCash.toLocaleString()}`;
+        appState.availableCash =
+            appState.netMonthlyPaycheck - appState.fixedExpenses;
+        document.getElementById(
+            'availableCashResult'
+        ).textContent = `Available Cash: $${appState.availableCash.toLocaleString()}`;
     };
 
     const updateCashLeaks = () => {
-        appState.totalLeaks = appState.cashLeaks.reduce((sum, leak) => sum + leak.amount, 0);
-        document.getElementById('totalCashLeaks').textContent = `Total Cash Leaks: $${appState.totalLeaks.toLocaleString()}`;
+        appState.totalLeaks = appState.cashLeaks.reduce(
+            (sum, leak) => sum + leak.amount,
+            0
+        );
+        document.getElementById(
+            'totalCashLeaks'
+        ).textContent = `Total Cash Leaks: $${appState.totalLeaks.toLocaleString()}`;
     };
-    
+
     document.getElementById('netPay').addEventListener('input', (e) => {
         appState.netMonthlyPaycheck = parseFloat(e.target.value) || 0;
         updateCalculations();
@@ -273,47 +314,64 @@ function renderAuditTab() {
     });
 
     // Cash Leaks Listeners
-    document.querySelectorAll('[data-leak-category], [data-leak-amount]').forEach(input => {
-        input.addEventListener('input', (e) => {
-            const index = parseInt(e.target.dataset.leakCategory ?? e.target.dataset.leakAmount);
-            const isCategory = e.target.dataset.leakCategory !== undefined;
+    document
+        .querySelectorAll('[data-leak-category], [data-leak-amount]')
+        .forEach((input) => {
+            input.addEventListener('input', (e) => {
+                const index = parseInt(
+                    e.target.dataset.leakCategory ?? e.target.dataset.leakAmount
+                );
+                const isCategory = e.target.dataset.leakCategory !== undefined;
 
-            if (isCategory) {
-                appState.cashLeaks[index].category = e.target.value;
-            }
-            else {
-                appState.cashLeaks[index].amount = parseFloat(e.target.value) || 0;
-            }
-            updateCashLeaks();
-            saveToLocalStorage();
+                if (isCategory) {
+                    appState.cashLeaks[index].category = e.target.value;
+                } else {
+                    appState.cashLeaks[index].amount =
+                        parseFloat(e.target.value) || 0;
+                }
+                updateCashLeaks();
+                saveToLocalStorage();
+            });
         });
-    });
 
     // Goal Listeners
-    document.getElementById('goalTitle').addEventListener('input', e => { 
-        appState.shortTermGoal.title = e.target.value; 
+    document.getElementById('goalTitle').addEventListener('input', (e) => {
+        appState.shortTermGoal.title = e.target.value;
         saveToLocalStorage();
-     });
-    document.getElementById('goalAmount').addEventListener('input', e => { 
-        appState.shortTermGoal.amount = parseFloat(e.target.value) || 0; 
+    });
+    document.getElementById('goalAmount').addEventListener('input', (e) => {
+        appState.shortTermGoal.amount = parseFloat(e.target.value) || 0;
         saveToLocalStorage();
-     });
-    document.getElementById('goalDate').addEventListener('input', e => { 
-        appState.shortTermGoal.targetDate = e.target.value; 
+    });
+    document.getElementById('goalDate').addEventListener('input', (e) => {
+        appState.shortTermGoal.targetDate = e.target.value;
         saveToLocalStorage();
-     });
+    });
 }
 
 // -- TAB 3: BLUEPRINT --
 function renderBlueprintTab() {
     // Calculations
-    const wealthTarget = appState.availableCash > 0 ? Math.round(appState.availableCash * 0.2) : 0;
+    const wealthTarget =
+        appState.availableCash > 0
+            ? Math.round(appState.availableCash * 0.2)
+            : 0;
     appState.spendingPlan.wealth = wealthTarget; // Update state with calc
 
-    const totalWants = appState.spendingPlan.debtAcceleration + appState.spendingPlan.guiltFreeBuckets.reduce((sum, b) => sum + b.amount, 0);
+    const totalWants =
+        appState.spendingPlan.debtAcceleration +
+        appState.spendingPlan.guiltFreeBuckets.reduce(
+            (sum, b) => sum + b.amount,
+            0
+        );
     const remainingForPlan = appState.availableCash - wealthTarget - totalWants;
 
-    const monthsToFund = (appState.totalLeaks || 0) === 0 ? 0 : Math.ceil((appState.shortTermGoal.amount || 0) / appState.totalLeaks);
+    const monthsToFund =
+        (appState.totalLeaks || 0) === 0
+            ? 0
+            : Math.ceil(
+                  (appState.shortTermGoal.amount || 0) / appState.totalLeaks
+              );
 
     const content = `
         <div class="animate-fade-in">
@@ -337,7 +395,9 @@ function renderBlueprintTab() {
 
                     <div>
                         <p class="block text-sm font-medium text-gray-700">Aggressive Debt Attack ($) (Extra Principal)</p>
-                        <input type="number" id="debtAcceleration" class="w-full mt-1 border p-2 rounded" value="${appState.spendingPlan.debtAcceleration || ''}">
+                        <input type="number" id="debtAcceleration" class="w-full mt-1 border p-2 rounded" value="${
+                            appState.spendingPlan.debtAcceleration || ''
+                        }">
                         <p class="text-sm text-gray-400">This is additional money on top of your wealth target and fixed.</p>
                     </div>
 
@@ -346,17 +406,23 @@ function renderBlueprintTab() {
                         <div class="grid md:grid-cols-2 gap-2">
                             <div>
                                 <label for="shortTermGoalName" class="block text-sm font-medium text-gray-700">Goal Title</label>        
-                                <input id="shortTermGoalName" type="text" class="w-full mt-1" value="${appState.shortTermGoal.title || ''}">
+                                <input id="shortTermGoalName" type="text" class="w-full mt-1" value="${
+                                    appState.shortTermGoal.title || ''
+                                }">
                             </div>
                             <div>
                                 <label for="shortTermGoalAmount" class="block text-sm font-medium text-gray-700">Target ($)</label>
-                                <input id="shortTermGoalAmount" type="number" class="w-full mt-1" value="${appState.shortTermGoal.amount || ''}">
+                                <input id="shortTermGoalAmount" type="number" class="w-full mt-1" value="${
+                                    appState.shortTermGoal.amount || ''
+                                }">
                             </div>
                         </div>
 
                         <div class="grid grid-cols-2 mt-4 p-4 bg-white rounded-lg shadow-sm border border-gray-100">
                             <div class="flex justify-between items-center">
-                                <p class="font-semibold text-lg text-gray-700">Monthly Leak Reallocation: <span id="monthlyLeakReallocation" class="text-amber-700">$${appState.totalLeaks || "0"}</span></p>
+                                <p class="font-semibold text-lg text-gray-700">Monthly Leak Reallocation: <span id="monthlyLeakReallocation" class="text-amber-700">$${
+                                    appState.totalLeaks || '0'
+                                }</span></p>
                             </div>
                             <div class="justify-self-end text-center">
                                 <p id="monthsToFund" class="text-3xl font-bold text-amber-700">
@@ -369,12 +435,20 @@ function renderBlueprintTab() {
 
                     <h4 class="font-semibold pt-4 border-t border-gray-200 text-gray-800">Guilt-Free Spending Buckets (Wants) - Target &#8804; 30%</h4>
                     <div id="guiltFreeBucketsContainer" class="space-y-3">
-                        ${appState.spendingPlan.guiltFreeBuckets.map((bucket, index) => `
+                        ${appState.spendingPlan.guiltFreeBuckets
+                            .map(
+                                (bucket, index) => `
                             <div class="grid grid-cols-2 gap-2">
-                                <input type="text" data-bucket-name="${index}" class="border p-2 rounded text-sm" value="${bucket.name}" placeholder="New Bucket">
-                                <input type="number" data-bucket-amount="${index}" class="border p-2 rounded text-sm" value="${bucket.amount || ''}" placeholder="Amount">
+                                <input type="text" data-bucket-name="${index}" class="border p-2 rounded text-sm" value="${
+                                    bucket.name
+                                }" placeholder="New Bucket">
+                                <input type="number" data-bucket-amount="${index}" class="border p-2 rounded text-sm" value="${
+                                    bucket.amount || ''
+                                }" placeholder="Amount">
                             </div>
-                        `).join('')}
+                        `
+                            )
+                            .join('')}
                     </div>
                     <button id="addBucket" class="btn-secondary text-sm py-2 px-4 rounded-lg font-medium">+ Add Bucket</button>
                     <button id="removeBucket" class="btn-secondary text-sm py-2 px-4 rounded-lg font-medium">- Remove Bucket</button>
@@ -382,7 +456,11 @@ function renderBlueprintTab() {
                     <div class="mt-4 p-4 bg-white rounded-lg shadow-sm border border-gray-100">
                         <div class="flex justify-between items-center">
                             <p class="font-semibold text-gray-700">Remaining for Variable Essentials:</p>
-                            <p id="remainingForNeeds" class="font-bold text-xl ${remainingForPlan < 0 ? 'text-red-600' : 'text-blue-500'}">$${remainingForPlan.toLocaleString()}</p>
+                            <p id="remainingForNeeds" class="font-bold text-xl ${
+                                remainingForPlan < 0
+                                    ? 'text-red-600'
+                                    : 'text-blue-500'
+                            }">$${remainingForPlan.toLocaleString()}</p>
                         </div>
                         <p class="text-xs text-gray-500">This remaining amount must cover your variable essential spending (groceries, gas, etc.).</p>
                     </div>
@@ -403,17 +481,35 @@ function renderBlueprintTab() {
     // -- Event Listeners for Blueprint --
     const handleInput = () => {
         // 1. Capture inputs
-        appState.spendingPlan.debtAcceleration = parseFloat(document.getElementById('debtAcceleration').value) || 0;
+        appState.spendingPlan.debtAcceleration =
+            parseFloat(document.getElementById('debtAcceleration').value) || 0;
 
-        document.querySelectorAll('#guiltFreeBucketsContainer > div').forEach((div, index) => {
-            const name = div.querySelector(`[data-bucket-name="${index}"]`).value;
-            const amount = parseFloat(div.querySelector(`[data-bucket-amount="${index}"]`).value) || 0;
-            appState.spendingPlan.guiltFreeBuckets[index] = { name, amount };
-        });
+        document
+            .querySelectorAll('#guiltFreeBucketsContainer > div')
+            .forEach((div, index) => {
+                const name = div.querySelector(
+                    `[data-bucket-name="${index}"]`
+                ).value;
+                const amount =
+                    parseFloat(
+                        div.querySelector(`[data-bucket-amount="${index}"]`)
+                            .value
+                    ) || 0;
+                appState.spendingPlan.guiltFreeBuckets[index] = {
+                    name,
+                    amount,
+                };
+            });
 
         // 2. Calculate remaining
-        const currentTotalWants = appState.spendingPlan.debtAcceleration + appState.spendingPlan.guiltFreeBuckets.reduce((sum, b) => sum + b.amount, 0);
-        const currentRemaining = appState.availableCash - wealthTarget - currentTotalWants;
+        const currentTotalWants =
+            appState.spendingPlan.debtAcceleration +
+            appState.spendingPlan.guiltFreeBuckets.reduce(
+                (sum, b) => sum + b.amount,
+                0
+            );
+        const currentRemaining =
+            appState.availableCash - wealthTarget - currentTotalWants;
 
         // 3. Update Text and Chart (Without re-rendering HTML inputs)
         const remEl = document.getElementById('remainingForNeeds');
@@ -421,11 +517,10 @@ function renderBlueprintTab() {
 
         if (currentRemaining < 0) {
             remEl.classList.remove('text-blue-500'); // Remove blue
-            remEl.classList.add('text-red-600');     // Add red
-        }
-        else {
-            remEl.classList.remove('text-red-600');  // Remove red
-            remEl.classList.add('text-blue-500');    // Add blue
+            remEl.classList.add('text-red-600'); // Add red
+        } else {
+            remEl.classList.remove('text-red-600'); // Remove red
+            remEl.classList.add('text-blue-500'); // Add blue
         }
         updateGoalAcceleration();
         renderPlanDonutChart();
@@ -434,24 +529,28 @@ function renderBlueprintTab() {
 
     const updateGoalAcceleration = () => {
         const monthlyLeaks = appState.totalLeaks || 0;
-      
-        const months =
-          monthlyLeaks === 0
-            ? 0
-            : Math.ceil(
-                (appState.shortTermGoal.amount || 0) / monthlyLeaks
-              );
-      
-        document.getElementById('monthlyLeakReallocation').textContent =
-          `$${monthlyLeaks.toLocaleString()}`;
-      
-        document.getElementById('monthsToFund').textContent = months;
-      };
-      
 
-    document.getElementById('debtAcceleration').addEventListener('input', handleInput);
-    document.getElementById('guiltFreeBucketsContainer').addEventListener('input', handleInput);
-    
+        const months =
+            monthlyLeaks === 0
+                ? 0
+                : Math.ceil(
+                      (appState.shortTermGoal.amount || 0) / monthlyLeaks
+                  );
+
+        document.getElementById(
+            'monthlyLeakReallocation'
+        ).textContent = `$${monthlyLeaks.toLocaleString()}`;
+
+        document.getElementById('monthsToFund').textContent = months;
+    };
+
+    document
+        .getElementById('debtAcceleration')
+        .addEventListener('input', handleInput);
+    document
+        .getElementById('guiltFreeBucketsContainer')
+        .addEventListener('input', handleInput);
+
     // Add Bucket Button
     document.getElementById('addBucket').addEventListener('click', () => {
         appState.spendingPlan.guiltFreeBuckets.push({ name: '', amount: 0 });
@@ -467,24 +566,35 @@ function renderBlueprintTab() {
         }
     });
 
-    document.getElementById('shortTermGoalName').addEventListener('input', e => { 
-        appState.shortTermGoal.title = e.target.value; 
-        saveToLocalStorage();
-     });
-    document.getElementById('shortTermGoalAmount').addEventListener('input', e => { 
-        appState.shortTermGoal.amount = parseFloat(e.target.value) || 0; 
-        updateGoalAcceleration();
-        saveToLocalStorage();
-     });
-
+    document
+        .getElementById('shortTermGoalName')
+        .addEventListener('input', (e) => {
+            appState.shortTermGoal.title = e.target.value;
+            saveToLocalStorage();
+        });
+    document
+        .getElementById('shortTermGoalAmount')
+        .addEventListener('input', (e) => {
+            appState.shortTermGoal.amount = parseFloat(e.target.value) || 0;
+            updateGoalAcceleration();
+            saveToLocalStorage();
+        });
 }
 
 function renderPlanDonutChart() {
     const ctx = document.getElementById('planDonutChart')?.getContext('2d');
     if (!ctx) return;
 
-    const wealthTarget = appState.availableCash > 0 ? Math.round(appState.availableCash * 0.2) : 0;
-    const totalWants = appState.spendingPlan.debtAcceleration + appState.spendingPlan.guiltFreeBuckets.reduce((sum, b) => sum + b.amount, 0);
+    const wealthTarget =
+        appState.availableCash > 0
+            ? Math.round(appState.availableCash * 0.2)
+            : 0;
+    const totalWants =
+        appState.spendingPlan.debtAcceleration +
+        appState.spendingPlan.guiltFreeBuckets.reduce(
+            (sum, b) => sum + b.amount,
+            0
+        );
     let remainingNeeds = appState.availableCash - wealthTarget - totalWants;
 
     let dataLabels = ['Wealth Target'];
@@ -509,29 +619,35 @@ function renderPlanDonutChart() {
     }
 
     //Guilt Free Buckets
-    appState.spendingPlan.guiltFreeBuckets.forEach(bucket => {
+    appState.spendingPlan.guiltFreeBuckets.forEach((bucket) => {
         if (bucket.amount > 0) {
             dataLabels.push(bucket.name);
             dataAmounts.push(bucket.amount);
-            dataColors.push(['#FFF1C2', '#F5D77A', '#E3B94A', '#C99A17'][dataLabels.length % 4]);
+            dataColors.push(
+                ['#FFF1C2', '#F5D77A', '#E3B94A', '#C99A17'][
+                    dataLabels.length % 4
+                ]
+            );
         }
     });
 
     // Prepare and render chart
     const data = {
         labels: dataLabels,
-        datasets: [{
-            data: dataAmounts,
-            backgroundColor: dataColors,
-            borderColor: '#FFFFFF',
-            borderWidth: 2,
-        }]
+        datasets: [
+            {
+                data: dataAmounts,
+                backgroundColor: dataColors,
+                borderColor: '#FFFFFF',
+                borderWidth: 2,
+            },
+        ],
     };
     const options = {
-        responsive: true, 
+        responsive: true,
         maintainAspectRatio: false,
-        plugins: { 
-            legend: { position: 'bottom' }, 
+        plugins: {
+            legend: { position: 'bottom' },
             datalabels: {
                 backgroundColor: 'rgba(0,0,0,0.3)',
                 borderRadius: 20,
@@ -543,11 +659,17 @@ function renderPlanDonutChart() {
                     const total = data.reduce((sum, v) => sum + v, 0);
                     if (value <= 0 || !total) return null; //Check for zero total
                     return `${((value / total) * 100).toFixed(1)}%`;
-                }
+                },
             },
-            tooltip: { callbacks: { label: (c) => ` $${c.raw.toLocaleString()}` } } }
+            tooltip: {
+                callbacks: { label: (c) => ` $${c.raw.toLocaleString()}` },
+            },
+        },
     };
-    initChart(ctx, 'doughnut', data, options, [ChartDataLabels, emptyStatePlugin]);
+    initChart(ctx, 'doughnut', data, options, [
+        ChartDataLabels,
+        emptyStatePlugin,
+    ]);
 }
 
 // -- TAB 4: AUTOMATE --
@@ -564,24 +686,42 @@ function renderAutomateTab() {
                     <p class="text-sm text-gray-600 mb-4">Commit to setting up these two automated transfers to occur the day after your paycheck hits your account.</p>
                     <ul class="space-y-4">
                         <li class="flex items-start">
-                            <input id="debtTransfer" type="checkbox" class="mt-1 text-brand-primary" ${appState.automation.debtTransfer ? 'checked' : ''} onchange="toggleAutomationCheck('debtTransfer', this.checked)">
+                            <input id="debtTransfer" type="checkbox" class="mt-1 text-brand-primary" ${
+                                appState.automation.debtTransfer
+                                    ? 'checked'
+                                    : ''
+                            } onchange="toggleAutomationCheck('debtTransfer', this.checked)">
                             <label for="debtTransfer" class="ml-3 text-sm">
                                 <span class="font-semibold block text-gray-900">Transfer 1: Debt Acceleration</span>
-                                Transfer <span class="font-bold text-brand-primary">$${(appState.spendingPlan.debtAcceleration || 0).toLocaleString()}</span> to your primary debt target.
+                                Transfer <span class="font-bold text-brand-primary">$${(
+                                    appState.spendingPlan.debtAcceleration || 0
+                                ).toLocaleString()}</span> to your primary debt target.
                             </label>
                         </li>
                         <li class="flex items-start">
-                            <input id="wealthTransfer" type="checkbox" class="mt-1 text-brand-primary" ${appState.automation.wealthTransfer ? 'checked' : ''} onchange="toggleAutomationCheck('wealthTransfer', this.checked)">
+                            <input id="wealthTransfer" type="checkbox" class="mt-1 text-brand-primary" ${
+                                appState.automation.wealthTransfer
+                                    ? 'checked'
+                                    : ''
+                            } onchange="toggleAutomationCheck('wealthTransfer', this.checked)">
                             <label for="wealthTransfer" class="ml-3 text-sm">
                                 <span class="font-semibold block text-gray-900">Transfer 2: Investment/Savings</span>
-                                Transfer <span class="font-bold text-brand-primary">$${(appState.spendingPlan.wealth || 0).toLocaleString()}</span> to your brokerage or savings.
+                                Transfer <span class="font-bold text-brand-primary">$${(
+                                    appState.spendingPlan.wealth || 0
+                                ).toLocaleString()}</span> to your brokerage or savings.
                             </label>
                         </li>
                         <li class="flex items-start">
-                            <input id="shortTermTransfer" type="checkbox" class="mt-1 text-brand-primary" ${appState.automation.shortTermTransfer ? 'checked' : ''} onchange="toggleAutomationCheck('shortTermTransfer', this.checked)">
+                            <input id="shortTermTransfer" type="checkbox" class="mt-1 text-brand-primary" ${
+                                appState.automation.shortTermTransfer
+                                    ? 'checked'
+                                    : ''
+                            } onchange="toggleAutomationCheck('shortTermTransfer', this.checked)">
                             <label for="shortTermTransfer" class="ml-3 text-sm">
                                 <span class="font-semibold block text-gray-900">Transfer 3: Short-Term Goal</span>
-                                Transfer <span class="font-bold text-brand-primary">$${(appState.totalLeaks || 0).toLocaleString()}</span> to your goal specific savings account.
+                                Transfer <span class="font-bold text-brand-primary">$${(
+                                    appState.totalLeaks || 0
+                                ).toLocaleString()}</span> to your goal specific savings account.
                             </label>
                         </li>
                     </ul>
@@ -592,7 +732,9 @@ function renderAutomateTab() {
                         Here are scripts to practice.
                     </p>
                     <div class="space-y-4">
-                        ${boundaryProtocols.map(p => `
+                        ${boundaryProtocols
+                            .map(
+                                (p) => `
                             <div class="prompt-card" onclick="this.classList.toggle('open')">
                                 <div class="flex justify-between items-center">
                                     <h4 class="font-semibold">${p.q}</h4>
@@ -602,7 +744,9 @@ function renderAutomateTab() {
                                     <p class="text-sm text-gray-600">${p.a}</p>
                                 </div>
                             </div>
-                        `).join('')}
+                        `
+                            )
+                            .join('')}
                     </div>
                 </div>
             </div>
@@ -659,20 +803,33 @@ function renderNextStepsTab() {
     document.getElementById('main-content-area').innerHTML = content;
 
     // Attach Event Listener for the Print Button
-    document.getElementById('printSummaryBtn').addEventListener('click', generateAndPrintSummary);
+    document
+        .getElementById('printSummaryBtn')
+        .addEventListener('click', generateAndPrintSummary);
 }
 
 // --- PRINT FUNCTIONALITY ---
 function generateAndPrintSummary() {
     // Sum up guilt-free buckets
-    const totalWantsBuckets = appState.spendingPlan.guiltFreeBuckets.reduce((sum, b) => sum + (b.amount || 0), 0);
-    const totalWants = appState.spendingPlan.debtAcceleration + totalWantsBuckets;
+    const totalWantsBuckets = appState.spendingPlan.guiltFreeBuckets.reduce(
+        (sum, b) => sum + (b.amount || 0),
+        0
+    );
+    const totalWants =
+        appState.spendingPlan.debtAcceleration + totalWantsBuckets;
 
     // Calculate Needs
-    const needsAmount = appState.availableCash - (appState.spendingPlan.wealth || 0) - totalWants;
+    const needsAmount =
+        appState.availableCash -
+        (appState.spendingPlan.wealth || 0) -
+        totalWants;
 
     // Generate Date String
-    const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    const today = new Date().toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+    });
 
     // Build HTML Template
     const printHTML = `
@@ -687,29 +844,51 @@ function generateAndPrintSummary() {
                 <table class="print-table">
                     <tr>
                         <td>Net Monthly Pay:</td>
-                        <td style="text-align:right"><strong>$${(appState.netMonthlyPaycheck || 0).toLocaleString()}</strong></td>
+                        <td style="text-align:right"><strong>$${(
+                            appState.netMonthlyPaycheck || 0
+                        ).toLocaleString()}</strong></td>
                     </tr>
                     <tr>
                         <td>Fixed Expenses:</td>
-                        <td style="text-align:right; color: #666;">- $${(appState.fixedExpenses || 0).toLocaleString()}</td>
+                        <td style="text-align:right; color: #666;">- $${(
+                            appState.fixedExpenses || 0
+                        ).toLocaleString()}</td>
                     </tr>
                     <tr>
                         <td style="padding: 10px 0;"><strong>True Available Cash:</strong></td>
-                        <td style="text-align:right; font-weight:bold; color: #530D6C;">$${(appState.availableCash || 0).toLocaleString()}</td>
+                        <td style="text-align:right; font-weight:bold; color: #530D6C;">$${(
+                            appState.availableCash || 0
+                        ).toLocaleString()}</td>
                     </tr>
                 </table>
             </div>
 
              <div class="print-section">
                 <h3 style="font-weight: bold; margin-bottom: 10px; border-bottom: 1px solid #ccc;">2. The Goal (Vision)</h3>
-                <p style="margin-bottom: 5px;"><strong>Goal:</strong> ${appState.shortTermGoal.title || 'Not set'}</p>
-                <p style="margin-bottom: 5px;"><strong>Target:</strong> $${(appState.shortTermGoal.amount || 0).toLocaleString()}</p>
-                <p><strong>By:</strong> ${appState.shortTermGoal.targetDate || 'No date set'}</p>
+                <p style="margin-bottom: 5px;"><strong>Goal:</strong> ${
+                    appState.shortTermGoal.title || 'Not set'
+                }</p>
+                <p style="margin-bottom: 5px;"><strong>Target:</strong> $${(
+                    appState.shortTermGoal.amount || 0
+                ).toLocaleString()}</p>
+                <p><strong>By:</strong> ${
+                    appState.shortTermGoal.targetDate || 'No date set'
+                }</p>
 
                 <div style="margin-top: 15px;">
-                    <p style="font-size: 12px; font-weight: bold; color: #666;">IDENTIFIED CASH LEAKS: $${appState.totalLeaks || 0}</p>
+                    <p style="font-size: 12px; font-weight: bold; color: #666;">IDENTIFIED CASH LEAKS: $${
+                        appState.totalLeaks || 0
+                    }</p>
                     <ul style="font-size: 12px; margin-left: 15px;">
-                        ${appState.cashLeaks.filter(l => l.category).map(l => `<li>${l.category}: $${l.amount}</li>`).join('') || '<li>No leaks recorded</li>'}
+                        ${
+                            appState.cashLeaks
+                                .filter((l) => l.category)
+                                .map(
+                                    (l) =>
+                                        `<li>${l.category}: $${l.amount}</li>`
+                                )
+                                .join('') || '<li>No leaks recorded</li>'
+                        }
                     </ul>
                 </div>
             </div>
@@ -717,7 +896,9 @@ function generateAndPrintSummary() {
 
         <div class="print-section">
             <h3 style="font-weight: bold; margin-bottom: 10px; border-bottom: 1px solid #ccc;">3. The Spending Plan</h3>
-            <p style="font-size: 14px; color: #666; margin-bottom: 10px;">Allocating your <strong>$${(appState.availableCash || 0).toLocaleString()}</strong> of available cash.</p>
+            <p style="font-size: 14px; color: #666; margin-bottom: 10px;">Allocating your <strong>$${(
+                appState.availableCash || 0
+            ).toLocaleString()}</strong> of available cash.</p>
             
             <table class="print-table" style="font-size: 14px;">
                 <thead>
@@ -729,7 +910,9 @@ function generateAndPrintSummary() {
                 <tbody>
                     <tr>
                         <td style="padding: 8px; color: #530D6C; font-weight: bold;">Wealth (Future You)</td>
-                        <td style="padding: 8px; text-align: right; font-weight: bold;">$${(appState.spendingPlan.wealth || 0).toLocaleString()}</td>
+                        <td style="padding: 8px; text-align: right; font-weight: bold;">$${(
+                            appState.spendingPlan.wealth || 0
+                        ).toLocaleString()}</td>
                     </tr>
                     <tr>
                         <td style="padding: 8px; color: #2B7FFF; font-weight: bold;">Needs (Essentials)</td>
@@ -743,12 +926,21 @@ function generateAndPrintSummary() {
                         <td style="padding: 4px 8px 4px 20px; font-size: 12px;">↳ Debt Acceleration</td>
                         <td style="padding: 4px 8px; text-align: right; font-size: 12px;">$${appState.spendingPlan.debtAcceleration.toLocaleString()}</td>
                     </tr>
-                    ${appState.spendingPlan.guiltFreeBuckets.filter(b => b.name).map(b => `
+                    ${appState.spendingPlan.guiltFreeBuckets
+                        .filter((b) => b.name)
+                        .map(
+                            (b) => `
                     <tr>
-                        <td style="padding: 4px 8px 4px 20px; font-size: 12px;">↳ Bucket: ${b.name}</td>
-                        <td style="padding: 4px 8px; text-align: right; font-size: 12px;">$${(b.amount || 0).toLocaleString()}</td>
+                        <td style="padding: 4px 8px 4px 20px; font-size: 12px;">↳ Bucket: ${
+                            b.name
+                        }</td>
+                        <td style="padding: 4px 8px; text-align: right; font-size: 12px;">$${(
+                            b.amount || 0
+                        ).toLocaleString()}</td>
                     </tr>
-                    `).join('')}
+                    `
+                        )
+                        .join('')}
                 </tbody>
             </table>
         </div>
@@ -757,15 +949,23 @@ function generateAndPrintSummary() {
             <h3 style="font-weight: bold; margin-bottom: 10px; border-bottom: 1px solid #ccc;">4. Automation Commitments</h3>
             <ul style="list-style: none;">
                 <li style="margin-bottom: 8px;">
-                    <span style="font-size: 18px;">${appState.automation.debtTransfer ? '☑' : '☐'}</span> 
+                    <span style="font-size: 18px;">${
+                        appState.automation.debtTransfer ? '☑' : '☐'
+                    }</span> 
                     <strong>Debt Transfer:</strong> Auto-transfer $${appState.spendingPlan.debtAcceleration.toLocaleString()} day after payday.
                 </li>
                 <li style="margin-bottom: 8px;">
-                    <span style="font-size: 18px;">${appState.automation.wealthTransfer ? '☑' : '☐'}</span> 
-                    <strong>Wealth Transfer:</strong> Auto-transfer $${(appState.spendingPlan.wealth || 0).toLocaleString()} day after payday.
+                    <span style="font-size: 18px;">${
+                        appState.automation.wealthTransfer ? '☑' : '☐'
+                    }</span> 
+                    <strong>Wealth Transfer:</strong> Auto-transfer $${(
+                        appState.spendingPlan.wealth || 0
+                    ).toLocaleString()} day after payday.
                 </li>
                 <li style="margin-bottom: 8px;">
-                    <span style="font-size: 18px;">${appState.automation.shortTermTransfer ? '☑' : '☐'}</span> 
+                    <span style="font-size: 18px;">${
+                        appState.automation.shortTermTransfer ? '☑' : '☐'
+                    }</span> 
                     <strong>Short-Term Goal Transfer:</strong> Auto-transfer $${appState.totalLeaks.toLocaleString()} monthly.
                 </li>
             </ul>
@@ -794,7 +994,7 @@ function generateAndPrintSummary() {
 // Navigation Tab Handlers
 function navigate(tabName) {
     // 1. Update Buttons
-    document.querySelectorAll('.tab-button').forEach(btn => {
+    document.querySelectorAll('.tab-button').forEach((btn) => {
         btn.classList.remove('tab-active');
         btn.classList.add('tab-inactive');
     });
@@ -814,7 +1014,7 @@ function navigate(tabName) {
 
 // --- INITIALIZATION ---
 // Add Click Listeners to Buttons
-document.querySelectorAll('.tab-button').forEach(button => {
+document.querySelectorAll('.tab-button').forEach((button) => {
     button.addEventListener('click', (e) => {
         navigate(e.target.dataset.tab);
     });

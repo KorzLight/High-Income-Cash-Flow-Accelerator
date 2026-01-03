@@ -1,54 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="maximum-scale=1.0, initial-scale=1.0, width=device-width"
+        />
+        <meta
+            name="description"
+            content="The Six Figure Spending Plan Workshop"
+        />
+        <title>The Six Figure Spending Plan Workshop</title>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="description" content="The Six Figure Spending Plan Workshop">
-    <title>The Six Figure Spending Plan Workshop</title>
+        <script
+            src="https://cdn.jsdelivr.net/npm/chart.js"
+            crossorigin="anonymous"
+        ></script>
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+        <link href="./output.css" rel="stylesheet" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+            rel="preconnect"
+            href="https://fonts.gstatic.com"
+            crossorigin=""
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap"
+            rel="stylesheet"
+        />
+    </head>
 
+    <body class="antialiased">
+        <div id="app" class="container mx-auto p-4 md:p-8 max-w-7xl">
+            <header class="text-center mb-8">
+                <h1 class="text-3xl md:text-4xl font-bold text-brand-primary">
+                    The Six Figure Spending Plan Workshop
+                </h1>
+                <p class="text-lg text-gray-600 mt-2">
+                    Mastering Your Cash Flow to End Lifestyle Creep
+                </p>
+            </header>
 
-    <link href="./output.css" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
-</head>
+            <nav class="flex justify-center border-b border-[#EAE0D5] mb-8">
+                <button
+                    data-tab="mindset"
+                    class="tab-button tab-active text-sm md:text-base py-3 px-4 md:px-6"
+                >
+                    1. Mindset & Vision
+                </button>
+                <button
+                    data-tab="audit"
+                    class="tab-button tab-inactive text-sm md:text-base py-3 px-4 md:px-6"
+                >
+                    2. The Audit
+                </button>
+                <button
+                    data-tab="blueprint"
+                    class="tab-button tab-inactive text-sm md:text-base py-3 px-4 md:px-6"
+                >
+                    3. The Blueprint
+                </button>
+                <button
+                    data-tab="automate"
+                    class="tab-button tab-inactive text-sm md:text-base py-3 px-4 md:px-6"
+                >
+                    4. Automate & Protect
+                </button>
+                <button
+                    data-tab="next"
+                    class="tab-button tab-inactive text-sm md:text-base py-3 px-4 md:px-6"
+                >
+                    5. Next Steps
+                </button>
+            </nav>
 
-<body class="antialiased">
-    <div id="app" class="container mx-auto p-4 md:p-8 max-w-7xl">
+            <main
+                id="main-content-area"
+                class="main-content p-6 md:p-8 min-h-[60vh] relative"
+            ></main>
+        </div>
 
-        <header class="text-center mb-8">
-            <h1 class="text-3xl md:text-4xl font-bold text-brand-primary">The Six Figure Spending Plan Workshop</h1>
-            <p class="text-lg text-gray-600 mt-2">Mastering Your Cash Flow to End Lifestyle Creep</p>
-        </header>
-
-        <nav class="flex justify-center border-b border-[#EAE0D5] mb-8">
-            <button data-tab="mindset" class="tab-button tab-active text-sm md:text-base py-3 px-4 md:px-6">
-                1. Mindset & Vision
-            </button>
-            <button data-tab="audit" class="tab-button tab-inactive text-sm md:text-base py-3 px-4 md:px-6">
-                2. The Audit
-            </button>
-            <button data-tab="blueprint" class="tab-button tab-inactive text-sm md:text-base py-3 px-4 md:px-6">
-                3. The Blueprint
-            </button>
-            <button data-tab="automate" class="tab-button tab-inactive text-sm md:text-base py-3 px-4 md:px-6">
-                4. Automate & Protect
-            </button>
-            <button data-tab="next" class="tab-button tab-inactive text-sm md:text-base py-3 px-4 md:px-6">
-                5. Next Steps
-            </button>
-        </nav>
-
-        <main id="main-content-area" class="main-content p-6 md:p-8 min-h-[60vh] relative">
-        </main>
-    </div>
-
-    <script src="./index.js"></script>
-
-</body>
-
+        <script src="./index.js"></script>
+    </body>
 </html>
