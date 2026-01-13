@@ -364,7 +364,11 @@ function renderBlueprintTab() {
             (sum, b) => sum + b.amount,
             0
         );
-    const remainingForPlan = appState.availableCash - wealthTarget - totalWants;
+    const remainingForPlan =
+        appState.availableCash -
+        wealthTarget -
+        totalWants -
+        (appState.totalLeaks || 0);
 
     const monthsToFund =
         (appState.totalLeaks || 0) === 0
@@ -509,7 +513,10 @@ function renderBlueprintTab() {
                 0
             );
         const currentRemaining =
-            appState.availableCash - wealthTarget - currentTotalWants;
+            appState.availableCash -
+            wealthTarget -
+            currentTotalWants -
+            (appState.totalLeaks || 0);
 
         // 3. Update Text and Chart (Without re-rendering HTML inputs)
         const remEl = document.getElementById('remainingForNeeds');
@@ -595,7 +602,11 @@ function renderPlanDonutChart() {
             (sum, b) => sum + b.amount,
             0
         );
-    let remainingNeeds = appState.availableCash - wealthTarget - totalWants;
+    let remainingNeeds =
+        appState.availableCash -
+        wealthTarget -
+        totalWants -
+        (appState.totalLeaks || 0);
 
     let dataLabels = ['Wealth Target'];
     let dataAmounts = [wealthTarget];
@@ -611,6 +622,12 @@ function renderPlanDonutChart() {
     dataLabels.push('Needs (Essentials)');
     dataAmounts.push(remainingNeeds);
     dataColors.push('#2B7FFF');
+
+    if (appState.totalLeaks > 0) {
+        dataLabels.push('Goal (Leak Reallocation)');
+        dataAmounts.push(appState.totalLeaks);
+        dataColors.push('#D97706');
+    }
 
     if (appState.spendingPlan.debtAcceleration > 0) {
         dataLabels.push('Debt Attack');
@@ -777,7 +794,7 @@ function renderNextStepsTab() {
                 <div class="flex-1 flex flex-col px-8 pt-8 pb-12 bg-[#F9FAFB] rounded-lg border border-gray-200 shadow-sm">
                     <h3 class="font-semibold text-xl mb-4">Strategy Session</h3>
                     <p class="mb-4 text-gray-600">A 30-minute deep dive into your personalized spending plan and mindset hurdles.</p>
-                    <a href="https://calendly.com/prea-epps/30min-strategy-session" target="_blank" class="mt-auto underline underline-offset-4 font-bold text-[var(--brand-primary)] hover:text-[var(--brand-hover)] transition-colors">
+                    <a href="https://calendly.com/prea-epps/30min-strategy-session" target="_blank" class="mt-auto underline underline-offset-4 font-bold text-(--brand-primary) hover:text-(--brand-hover) transition-colors">
                         Book My Session &rarr;
                     </a> 
                 </div>
@@ -785,14 +802,14 @@ function renderNextStepsTab() {
                 <div class="flex-1 flex flex-col px-8 pt-8 pb-12 bg-[#F9FAFB] rounded-lg border border-gray-200 shadow-sm">
                     <h3 class="font-semibold text-xl mb-4">Freedom Through Finance</h3>
                     <p class="mb-4 text-gray-600">Define your biggest goals and get a professional recommendation on your next steps.</p>
-                    <a href="https://calendly.com/prea-epps/freedom-through-finance" target="_blank" class="mt-auto underline underline-offset-4 font-bold text-[var(--brand-primary)] hover:text-[var(--brand-hover)] transition-colors">
+                    <a href="https://calendly.com/prea-epps/freedom-through-finance" target="_blank" class="mt-auto underline underline-offset-4 font-bold text-(--brand-primary) hover:text-(--brand-hover) transition-colors">
                         Schedule Call &rarr;
                     </a> 
                 </div>
             </div>
 
             
-            <button id="printSummaryBtn" class="flex items-center justify-center mt-6 px-12  mx-auto text-brand-primary border border-brand-primary hover:bg-gray-50 font-medium rounded-lg text-sm px-5 py-2.5 transition-colors">
+            <button id="printSummaryBtn" class="flex items-center justify-center mt-6 px-12  mx-auto text-brand-primary border border-brand-primary hover:bg-gray-50 font-medium rounded-lg text-sm py-2.5 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0 0 21 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 0 0-1.913-.247M6.34 18H5.25A2.25 2.25 0 0 1 3 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 0 1 1.913-.247m10.5 0a48.536 48.536 0 0 0-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5Zm-3 0h.008v.008H15V10.5Z" />
                 </svg>
@@ -816,7 +833,9 @@ function generateAndPrintSummary() {
         0
     );
     const totalWants =
-        appState.spendingPlan.debtAcceleration + totalWantsBuckets;
+        appState.spendingPlan.debtAcceleration +
+        totalWantsBuckets +
+        (appState.totalLeaks || 0);
 
     // Calculate Needs
     const needsAmount =
@@ -834,7 +853,7 @@ function generateAndPrintSummary() {
     // Build HTML Template
     const printHTML = `
         <div class="print-header">
-            <h1 style="color: #530D6C; font-size: 24px; font-weight: bold; margin-bottom: 5px;">The Six Figure Spending Plan</h1>
+            <h1 style="color: #530D6C; font-size: 24px; font-weight: bold; margin-bottom: 5px;">The Conscious Spending Plan Intensive</h1>
             <p style="color: #666; font-size: 14px;">Workshop Summary • Generated on ${today}</p>
         </div>
 
@@ -920,8 +939,22 @@ function generateAndPrintSummary() {
                     </tr>
                     <tr>
                         <td style="padding: 8px; font-weight: bold;">Wants (Total)</td>
-                        <td style="padding: 8px; text-align: right;">$${totalWants.toLocaleString()}</td>
+                        <td style="padding: 8px; text-align: right; font-weight: bold">$${totalWants.toLocaleString()}</td>
                     </tr>
+
+                    ${
+                        appState.totalLeaks > 0
+                            ? `
+                        <tr>
+                            <td style="padding: 4px 8px 4px 20px; font-size: 12px; color: rgb(180 83 9);">↳ Goal: ${
+                                appState.shortTermGoal.title ||
+                                'Leak Reallocation'
+                            }</td>
+                            <td style="padding: 4px 8px; text-align: right; font-size: 12px;">$${appState.totalLeaks.toLocaleString()}</td>
+                        </tr>`
+                            : ''
+                    }
+
                     <tr>
                         <td style="padding: 4px 8px 4px 20px; font-size: 12px;">↳ Debt Acceleration</td>
                         <td style="padding: 4px 8px; text-align: right; font-size: 12px;">$${appState.spendingPlan.debtAcceleration.toLocaleString()}</td>
@@ -972,7 +1005,7 @@ function generateAndPrintSummary() {
         </div>
 
         <div style="margin-top: 40px; text-align: center; color: #666; font-size: 12px;">
-            <p>The Six Figure Spending Plan Workshop</p>
+            <p>The Conscious Spending Plan Intensive Workshop</p>
             <p>www.reframedfinancialcoaching.com</p>
         </div>
     `;
